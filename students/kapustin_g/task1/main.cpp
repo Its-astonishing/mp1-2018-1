@@ -2,7 +2,6 @@
 #include <iostream>
 #include <time.h>
 #include <ctime>
-#include <math.h>
 #include <windows.h>
 #include <conio.h>
 #include <stdio.h>
@@ -10,187 +9,226 @@
 
 using namespace std;
 
-void inp(int *_h, int  *_m, int *_s); //воспомогательная функция, ввод
+void inp(int *_h, int  *_m, int *_s);
 
 class TTime
 {
-	int hour;
-	int minut;
-	int sec;
+    int hour;
+    int min;
+    int sec;
 public:
-	TTime(int _hour = 0, int _min = 0, int _sec = 0);
-	void set_time(int *_hour, int *_min, int *_sec);
-	void change_time(int *_hour, int *_min, int *_sec, bool *side);
-	void correct();
-	void set_sys_time();
-	void show();
-	void difference(int *_hour, int *_min, int *_sec);
+    TTime(int _hour = 0, int _min = 0, int _sec = 0); //constructor
+    TTime& operator=(const TTime& time1)  //assignment
+    {
+        hour = time1.hour;
+        min = time1.min;
+        sec = time1.sec;
+        return *this;
+    }
+    void SetTime(int _hour, int _min, int _sec);
+    void ChangeTime(int _hour, int _min, int _sec, int side);
+    void SetSysTime();
+    void ShowTime();
+    void Difference(int _hour, int _min, int _sec);
 };
 
 void main() {
-	TTime t1;
-	bool cont = true;
-	int choise;
-	int input;
-	int _h = 0;
-	int _m = 0;
-	int _s = 0;
-	bool side = false;
-	while (cont)
-	{
-	input:
-		system("cls");
-		cout << "1. Set system time\n"
-			<< "2. Input your own time\n"
-			<< "3. Exit\n";
-		cin >> choise;
-		switch (choise)
-		{
-		case 1:
-			t1.set_sys_time();
-			break;
-		case 2:
-			inp(&_h, &_m, &_s);
-			t1.set_time(&_h, &_m, &_s);
-			break;
-		case 3:
-			cont = 0;
-			break;
-		}
-		while (cont)
-		{
-			system("cls");
-			cout << "Current TTime: \n"; t1.show();
-			cout << "\n1. Input new value and then calculate the difference\n"
-				<< "2. Change TTime\n"
-				<< "3. Move TTime\n"
-				<< "4. Exit\n";
-			cin >> choise;
-			switch (choise)
-			{
-			case 1:
-				inp(&_h, &_m, &_s);
-				t1.difference(&_h, &_m, &_s);
-				break;
-			case 2: 
-				goto input;
-			case 3:
-				inp(&_h, &_m, &_s);
-				cout << "\n5.Forward? \n6.Backward?\n";
-				cin >> choise;
-				switch (choise) {
-				case 5:
-					side = true;
-					break;
-				case 6:
-					side = false;
-					break;
-				}
-				t1.change_time(&_h, &_m, &_s, &side);
-				break;
-			case 4:
-				cont = 0;
-				break;
-			}
-		}
-	}
+    TTime t1;
+    bool cont = true;
+    int choice;
+    int input;
+    int _h = 0;
+    int _m = 0;
+    int _s = 0;
+    bool side = false;
+    while (cont)
+    {
+    input:
+        system("cls");
+        cout << "1. Set system time\n"
+            << "2. Input your own time\n"
+            << "3. Exit\n";
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            t1.SetSysTime();
+            break;
+        case 2:
+            inp(&_h, &_m, &_s);
+            t1.SetTime(_h, _m, _s);
+            break;
+        case 3:
+            cont = 0;
+            break;
+        }
+        while (cont)
+        {
+            system("cls");
+            cout << "Current TTime: \n"; t1.ShowTime();
+            cout << "\n1. Input new value and then calculate the Difference\n"
+                << "2. Change TTime\n"
+                << "3. Move TTime\n"
+                << "4. Exit\n";
+            cin >> choice;
+            switch (choice)
+            {
+            case 1:
+                inp(&_h, &_m, &_s);
+                t1.Difference(_h, _m, _s);
+                _getch();
+                break;
+            case 2:
+                goto input;
+            case 3:
+                inp(&_h, &_m, &_s);
+                cout << "\n5.Forward? \n6.Backward?\n";
+                cin >> choice;
+                switch (choice) {
+                case 5:
+                    side = 1;
+                    break;
+                case 6:
+                    side = -1;
+                    break;
+                }
+                t1.ChangeTime(_h, _m, _s, side);
+                break;
+            case 4:
+                cont = 0;
+                break;
+            }
+        }
+    }
 }
 
 TTime::TTime(int _hour, int _min, int _sec)
-	: hour(_hour), minut(_min), sec(_sec)
 {
-	correct();
+    hour = _hour;
+    min = _min;
+    sec = _sec;
 }
 
-void TTime::set_time(int *_hour, int *_min, int *_sec)
+void TTime::SetTime(int _hour, int _min, int _sec)
 {
-	sec = *_sec;
-	minut = *_min;
-	hour = *_hour;
-	correct();
+    sec = _sec;
+    min = _min;
+    hour = _hour;
 }
 
-void TTime::change_time(int *_hour, int *_min, int *_sec, bool *side)
-{ //side: true == forward, false == backward
-	if (*side)
-	{
-		hour += *_hour;
-		minut += *_min;
-		sec += *_sec;
-	}
-	else
-	{
-		hour -= *_hour;
-		minut -= *_min;
-		sec -= *_sec;
-	}
-	correct();
+void TTime::ChangeTime(int _hour, int _min, int _sec, int side)
+{ //side: 1 == forward, -1 == backward
+    if (side == 1)
+    {
+        hour += _hour;
+        min += _min;
+        sec += _sec;
+    }
+    else
+    {
+        hour -= _hour;
+        min -= _min;
+        sec -= _sec;
+    }
+    //correct seconds
+    if (sec > 59)
+    {
+        min += sec / 60;
+        sec = sec % 60;
+    }
+    if (sec < 0)		// 12.06.15 - 0.0.20 = 12.06.(-5).. 
+    {
+        min -= 1 + abs(sec / 60);
+        sec = 60 - sec % 60;
+    }
+    //correct minutes
+    if (min > 59)
+    {
+        hour += min / 60;
+        min = min % 60;
+    }
+    if (min < 0)
+    {
+        hour -= 1 + abs(min / 60);
+        min = 60 - min % 60;
+    }
+    //correct hours
+    if (hour > 23)
+        hour = hour % 24;
+    if (hour == -24)
+        hour = 0;
+    if (hour < 0) // 01.00.00 - 3.00.00 = -2.00.00
+        hour = 24 + hour % 24;
 }
 
-void TTime::correct() //optimize
+void TTime::SetSysTime() //get system time
 {
-	//seconds
-	if (sec > 59)
-	{
-		minut += sec / 60;
-		sec = sec % 60;
-	}
-	if (sec < 0)		// 12.06.15 - 0.0.20 = 12.06.(-5).. 
-	{
-		minut -= 1 + abs(sec / 60);
-		sec = 60 - sec % 60;
-	}
-	//minutes
-	if (minut > 59)
-	{
-		hour += minut / 60;
-		minut = minut % 60;
-	}
-	if (minut < 0)
-	{
-		hour -= 1 + abs(minut / 60);
-		minut = 60 - minut % 60;
-	}
-	//hours
-	if (hour > 23)
-		hour = hour % 24;
-	if (hour == -24)
-		hour = 0;
-	if (hour < 0) // 01.00.00 - 3.00.00 = -2.00.00
-		hour = 24 + hour % 24;
+    time_t current_time;
+    struct tm  local_time;
+
+    time(&current_time);
+    localtime_s(&local_time, &current_time);
+    hour = local_time.tm_hour;
+    min = local_time.tm_min;
+    sec = local_time.tm_sec;
 }
 
-void TTime::set_sys_time() //get system time
+void TTime::ShowTime() //show current time
 {
-	time_t current_time;
-	struct tm  local_time;
-
-	time(&current_time);
-	localtime_s(&local_time, &current_time);
-	hour = local_time.tm_hour;
-	minut = local_time.tm_min;
-	sec = local_time.tm_sec;
+    cout << "It's " << hour << " hours " << min << " mines and " << sec << " seconds";
 }
 
-void TTime::show() //show current time
+void TTime::Difference(int _hour, int _min, int _sec) //calculate Difference
 {
-	cout << "It's " << hour << " hours " << minut << " minutes and " << sec << " seconds";
+    int _h = hour;
+    int _m = min;
+    int _s = sec;
+
+    if (_hour * 86400 + _min * 60 + _sec > hour * 86400 + min * 60 + sec) // input > set
+    {
+        if (_sec < _s)
+        {
+            _sec += 60;
+            _min--;
+        }
+        _s = _sec - _s;
+        if (_min < _m)
+        {
+            _min += 60;
+            _hour--;
+        }
+        _m = _min - _m;
+        _h = _hour - _h;
+    }
+    if (_hour * 86400 + _min * 60 + _sec < hour * 86400 + min * 60 + sec) // set > input
+    {
+        if (_sec > _s)
+        {
+            _s += 60;
+            _m--;
+        }
+        _s = _s - _sec;
+        if (_min > _m)
+        {
+            _m += 60;
+            _h--;
+        }
+        _m = _m - _min;
+        _h = _h - _hour;
+    }
+    cout << "The difference is "
+        << _h << " hours "
+        << _m << " minutes "
+        << _s << " seconds\n";
 }
 
-void TTime::difference(int *_hour, int *_min, int *_sec) //calculate difference
+void inp(int *_h, int  *_m, int *_s)
 {
-	cout << "Difference between input and set time is " << abs(hour - *_hour) << " hours "
-		<< abs(minut - *_min) << " minutes " << abs(sec - *_sec) << "seconds";
-	_getch();
-}
-
-void inp(int *_h, int  *_m, int *_s) 
-{
-	cout << "Input hour ";
-	cin >> *_h;
-	cout << "\nInput minute ";
-	cin >> *_m;
-	cout << "\nInput sec ";
-	cin >> *_s;
+    cout << "Input hour between 0 and 23\n";
+    cin >> *_h;
+    cout << "\nInput minute between 0 and 59\n";
+    cin >> *_m;
+    cout << "\nInput second between 0 and 59\n";
+    cin >> *_s;
 
 }
