@@ -3,6 +3,7 @@
 #include <time.h>
 #include <ctime>
 #include <windows.h>
+#include <math.h>
 #include <conio.h>
 #include <stdio.h>
 
@@ -29,7 +30,7 @@ public:
     void ChangeTime(int _hour, int _min, int _sec, int side);
     void SetSysTime();
     void ShowTime();
-    void Difference(int _hour, int _min, int _sec);
+    void Difference(int * _hour, int * _min, int * _sec);
 };
 
 void main() {
@@ -40,7 +41,7 @@ void main() {
     int _h = 0;
     int _m = 0;
     int _s = 0;
-    bool side = false;
+    int side = 1;
     while (cont)
     {
     input:
@@ -75,7 +76,11 @@ void main() {
             {
             case 1:
                 inp(&_h, &_m, &_s);
-                t1.Difference(_h, _m, _s);
+                t1.Difference(&_h, &_m, &_s);
+                cout << "\nThe difference between set and input time is "
+                    << _h << " hours "
+                    << _m << " minutes "
+                    << _s << " seconds";
                 _getch();
                 break;
             case 2:
@@ -175,51 +180,18 @@ void TTime::SetSysTime() //get system time
 
 void TTime::ShowTime() //show current time
 {
-    cout << "It's " << hour << " hours " << min << " mines and " << sec << " seconds";
+    cout << "It's " << hour << " hours " << min << " minutes and " << sec << " seconds";
 }
 
-void TTime::Difference(int _hour, int _min, int _sec) //calculate Difference
+void TTime::Difference(int *_hour, int *_min, int *_sec) //calculate Difference
 {
-    int _h = hour;
-    int _m = min;
-    int _s = sec;
-
-    if (_hour * 86400 + _min * 60 + _sec > hour * 86400 + min * 60 + sec) // input > set
-    {
-        if (_sec < _s)
-        {
-            _sec += 60;
-            _min--;
-        }
-        _s = _sec - _s;
-        if (_min < _m)
-        {
-            _min += 60;
-            _hour--;
-        }
-        _m = _min - _m;
-        _h = _hour - _h;
-    }
-    if (_hour * 86400 + _min * 60 + _sec < hour * 86400 + min * 60 + sec) // set > input
-    {
-        if (_sec > _s)
-        {
-            _s += 60;
-            _m--;
-        }
-        _s = _s - _sec;
-        if (_min > _m)
-        {
-            _m += 60;
-            _h--;
-        }
-        _m = _m - _min;
-        _h = _h - _hour;
-    }
-    cout << "The difference is "
-        << _h << " hours "
-        << _m << " minutes "
-        << _s << " seconds\n";
+    int TotalSec1 = hour * 3600 + min * 60 + sec;
+    int TotalSec2 = *_hour * 3600 + *_min * 60 + *_sec;
+    int Diff = abs(TotalSec1 - TotalSec2);
+    *_hour = Diff / 3600;
+    Diff = Diff - *_hour * 3600;
+    *_min = Diff / 60;
+    *_sec = Diff % 60;
 }
 
 void inp(int *_h, int  *_m, int *_s)
