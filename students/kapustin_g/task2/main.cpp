@@ -139,6 +139,7 @@ public:
                 array[i][j] *= a;
         return *this;
     }
+
 };
 
 int main()
@@ -148,6 +149,7 @@ int main()
     cin >> size;
     matrix A(size);
     matrix B(size);
+    matrix C(size);
     if (size > 1 && size < 8)
     {
         for (int i = 0; i < size; i++)
@@ -158,6 +160,7 @@ int main()
                 B.setElem(i, j, rand() % 10 + 1);
             }
         }
+        C = A + B;
         cout << "Matrix A:" << endl;
         A.print();
         cout << endl;
