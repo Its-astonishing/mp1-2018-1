@@ -18,7 +18,7 @@ public:
             array[i] = new int[size];
         }
         for (int i = 0; i < size; i++)
-            for (int j = 0; j < size; j++)           
+            for (int j = 0; j < size; j++)
                 array[i][j] = 0;
     }
     matrix(matrix& mtr)
@@ -64,6 +64,7 @@ public:
         {
             for (int j = 0; j < size; j++)
             {
+                if (i == j) continue;
                 tmp += array[i][j];
 
             }
@@ -107,7 +108,7 @@ public:
         matrix c(mtr.size);
         for (int i = 0; i < mtr.size; i++)
             for (int j = 0; j < mtr.size; j++)
-                c.array[i][j] = array[i][j] -mtr.array[i][j];
+                c.array[i][j] = array[i][j] - mtr.array[i][j];
         return c;
     }
     matrix& operator+=(const matrix& mtr)
@@ -139,7 +140,6 @@ public:
                 array[i][j] *= a;
         return *this;
     }
-
 };
 
 int main()
