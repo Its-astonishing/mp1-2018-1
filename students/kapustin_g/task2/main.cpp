@@ -43,7 +43,49 @@ public:
     }
     void setSize(int n)
     {
-        size = n;
+        matrix a(size); //define a copy
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                a.array[i][j] = array[i][j];
+        if (n > size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                delete[] array[i];
+            }
+            delete[] array;
+            size = n;
+            array = new int*[size];
+            for (int i = 0; i < size; i++)
+            {
+                array[i] = new int[size];
+            }
+            for (int i = 0; i < size; i++)
+                for (int j = 0; j < size; j++)
+                {
+                    if (i >= a.size || j >= a.size)
+                        array[i][j] = 0;
+                    else
+                        array[i][j] = a.array[i][j];
+                }
+        }
+        if (n < size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                delete[] array[i];
+            }
+            delete[] array;
+            size = n;
+            array = new int*[size];
+            for (int i = 0; i < size; i++)
+            {
+                array[i] = new int[size];
+            }
+            for (int i = 0; i < size; i++)
+                for (int j = 0; j < size; j++)
+                    array[i][j] = a.array[i][j];
+        }
     }
     void setElem(int i, int j, int elem)
     {
@@ -147,10 +189,10 @@ int main()
     int size;
     cout << "Size of matrix (from 2 to 8):" << endl;
     cin >> size;
-    matrix A(size);
-    matrix B(size);
     if (size > 1 && size < 8)
     {
+        matrix A(size);
+        matrix B(size);
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -158,7 +200,7 @@ int main()
                 A.setElem(i, j, rand() % 10 + 1);
                 B.setElem(i, j, rand() % 10 + 1);
             }
-        }
+        };
         cout << "Matrix A:" << endl;
         A.print();
         cout << endl;
@@ -171,10 +213,16 @@ int main()
         cout << "Size of matrix: " << A.getSize() << endl;
         cout << "Element number (2,2): " << A.getElem(2, 2) << endl;;
         if (A.isDiagDominate() == -1)
-            cout << "Matrix isn't diagonally dominant\n";
+            cout << "Matrix A isn't diagonally dominant\n";
         else
-            cout << "Matrix is diagonally dominant\n";
-        system("pause");
+            cout << "Matrix A is diagonally dominant\n";
+        cout << "Set new A matrix size: ";
+        cin >> size;
+        if (size >= 1 && size < 8) {
+            A.setSize(size);
+            A.print();
+            system("pause");
+        }
     }
     return 0;
 }
