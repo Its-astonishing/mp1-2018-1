@@ -43,7 +43,7 @@ public:
     }
     void setSize(int n)
     {
-        matrix a(size); //define a copy
+        matrix a(size); 
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
                 a.array[i][j] = array[i][j];
