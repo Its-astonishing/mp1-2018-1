@@ -14,9 +14,7 @@ public:
         size = n;
         array = new int*[size];
         for (int i = 0; i < size; i++)
-        {
             array[i] = new int[size];
-        }
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
                 array[i][j] = 0;
@@ -36,9 +34,7 @@ public:
     ~matrix()
     {
         for (int i = 0; i < size; i++)
-        {
             delete[] array[i];
-        }
         delete[] array;
     }
     void setSize(int n)
@@ -47,45 +43,19 @@ public:
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
                 a.array[i][j] = array[i][j];
-        if (n > size)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                delete[] array[i];
-            }
-            delete[] array;
-            size = n;
-            array = new int*[size];
-            for (int i = 0; i < size; i++)
-            {
-                array[i] = new int[size];
-            }
-            for (int i = 0; i < size; i++)
-                for (int j = 0; j < size; j++)
-                {
-                    if (i >= a.size || j >= a.size)
-                        array[i][j] = 0;
-                    else
-                        array[i][j] = a.array[i][j];
-                }
-        }
-        if (n < size)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                delete[] array[i];
-            }
-            delete[] array;
-            size = n;
-            array = new int*[size];
-            for (int i = 0; i < size; i++)
-            {
-                array[i] = new int[size];
-            }
-            for (int i = 0; i < size; i++)
-                for (int j = 0; j < size; j++)
+        for (int i = 0; i < size; i++)
+            delete[] array[i];
+        delete[] array;
+        size = n;
+        array = new int*[size];
+        for (int i = 0; i < size; i++)
+            array[i] = new int[size];
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (i >= a.size || j >= a.size)
+                    array[i][j] = 0;
+                else
                     array[i][j] = a.array[i][j];
-        }
     }
     void setElem(int i, int j, int elem)
     {
@@ -97,9 +67,9 @@ public:
     }
     int getElem(int i, int j)
     {
-        return array[i - 1][j - 1];
+        return array[i][j];
     }
-    int isDiagDominate()
+    bool isDiagDominate()
     {
         int tmp = 0;
         for (int i = 0; i < size; i++)
@@ -108,10 +78,9 @@ public:
             {
                 if (i == j) continue;
                 tmp += array[i][j];
-
             }
             if (abs(array[i][i]) < abs(tmp))
-                return -1;
+                return 0;
             tmp = 0;
         }
         return 1;
@@ -128,30 +97,10 @@ public:
     }
     matrix& operator=(const matrix& mtr)
     {
-        {
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                    array[i][j] = mtr.array[i][j];
-            }
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                array[i][j] = mtr.array[i][j];
             return *this;
-        }
-    }
-    matrix operator+(const matrix& mtr)
-    {
-        matrix c(mtr.size);
-        for (int i = 0; i < mtr.size; i++)
-            for (int j = 0; j < mtr.size; j++)
-                c.array[i][j] = mtr.array[i][j] + array[i][j];
-        return c;
-    }
-    matrix operator-(const matrix& mtr)
-    {
-        matrix c(mtr.size);
-        for (int i = 0; i < mtr.size; i++)
-            for (int j = 0; j < mtr.size; j++)
-                c.array[i][j] = array[i][j] - mtr.array[i][j];
-        return c;
     }
     matrix& operator+=(const matrix& mtr)
     {
@@ -160,12 +109,21 @@ public:
                 array[i][j] += mtr.array[i][j];
         return *this;
     }
+    matrix operator+(const matrix& mtr)
+    {
+        return *this += mtr;
+      
+    }
     matrix& operator-=(const matrix& mtr)
     {
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
                 array[i][j] = array[i][j] - mtr.array[i][j];
         return *this;
+    }
+    matrix operator-(const matrix& mtr)
+    {
+        return *this -= mtr;
     }
     matrix operator*(int a)
     {
@@ -177,10 +135,7 @@ public:
     }
     matrix& operator*=(const int a)
     {
-        for (int i = 0; i < size; i++)
-            for (int j = 0; j < size; j++)
-                array[i][j] *= a;
-        return *this;
+        return *this *= a;
     }
 };
 
@@ -191,7 +146,7 @@ int main()
     cin >> size;
     if (size > 1 && size < 8)
     {
-        matrix A(size); //
+        matrix A(size); 
         matrix B(size);
         for (int i = 0; i < size; i++)
         {
@@ -211,14 +166,15 @@ int main()
         cout << "A-B:" << endl; (A - B).print(); cout << endl;
         cout << "A*3:" << endl; (A * 3).print(); cout << endl;
         cout << "Size of matrix: " << A.getSize() << endl;
-        cout << "Element number (2,2): " << A.getElem(2, 2) << endl;;
-        if (A.isDiagDominate() == -1)
+        cout << "Element number (2,2): " << A.getElem(1, 1) << endl;;
+        if (A.isDiagDominate())
             cout << "Matrix A isn't diagonally dominant\n";
         else
             cout << "Matrix A is diagonally dominant\n";
         cout << "Set new A matrix size: ";
         cin >> size;
-        if (size >= 1 && size < 8) {
+        if (size >= 1 && size < 8) 
+        {
             A.setSize(size);
             A.print();
             system("pause");
