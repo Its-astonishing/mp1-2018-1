@@ -9,22 +9,6 @@ class matrix
 private:
     int** array;
     int size;
-    matrix plus(const matrix& mtr)
-    {
-        matrix a(mtr.size);
-        for (int i = 0; i < mtr.size; i++)
-            for (int j = 0; j < mtr.size; j++)
-                a.array[i][j] = array[i][j] + mtr.array[i][j];
-        return a;
-    }
-    matrix minus(const matrix& mtr)
-    {
-        matrix a(mtr.size);
-        for (int i = 0; i < mtr.size; i++)
-            for (int j = 0; j < mtr.size; j++)
-                a.array[i][j] = array[i][j] - mtr.array[i][j];
-        return a;
-    }
 public:
     matrix(int n)
     {
@@ -104,12 +88,12 @@ public:
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
-                cout << setw(3) << array[i][j] << " ";
+                cout << setw(5) << array[i][j];
             cout << endl;
         }
 
     }
-    matrix& operator=(const matrix& mtr) // память
+    matrix& operator=(const matrix& mtr) 
     {
         for (int i = 1; i < size; i++)
             delete[] array[i];
