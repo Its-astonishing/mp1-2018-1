@@ -66,7 +66,7 @@ public:
         line = _line;
         len = size(line);
     }
-    void writeTillLen(string _line) //записать в поле ввода символов не больше, чем задано в длине поля
+    void writeTillLen(string _line) //записать в строку символов не больше, чем задано в длине поля
     {
             line = _line;
             for (size_t i = size(line); i > len; i--)
