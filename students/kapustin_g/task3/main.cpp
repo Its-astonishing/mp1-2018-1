@@ -1,13 +1,11 @@
 #include <iostream>
 #include <conio.h>
 #include <string>
-#include <locale>
 #include <windows.h>
 
 #define BACKSPACE '\b'
 #define ENTER '\r'
 #define EMPTY '\0'
-#define SPACE 32
 #define ESC 27
 
 using namespace std;
@@ -71,12 +69,6 @@ public:
     }
     void main()
     {
-        if (len == 0)
-        {
-            cout << "Error, length = 0 ";
-            _getch();
-            return;
-        }
         string backup = line;
         char type;
         line.erase();
@@ -93,12 +85,18 @@ public:
                     cout << BACKSPACE << EMPTY << BACKSPACE;
                 }
                 break;
-            case ESC:
+            case ESC: 
                 line = backup;
             case ENTER: 
                 i = -1;
                 break;
-            default:
+            default: 
+                if (len == 0)
+                {
+                    cout << "Can't write anything, legnth = 0";
+                    _getch();
+                    return;
+                }
                 if (i == len) //если достигнут максимум длины, то блокируется возможноть добавлять символы
                     break;
                 i++;
@@ -123,16 +121,16 @@ int main()
     string buf;
     bool menu = 1;
     bool isCursorPut = 0;
-    textEditor m(0, 10, 10);
+    textEditor m(0, 15, 15);
 
     while (menu)
     {
         system("cls");
-        cout << "Put cursor: ";
+        cout << "Put cursor: ON"; 
         if (isCursorPut)
-            cout << "ON" << endl;
+            cout << "[x| ] OFF\n\n";
         else
-            cout << "OFF" << endl;
+            cout << "[ |x] OFF\n\n";
         cout << "Run Text Editor \t\t---1" << endl;
         cout << "Toggle PutCursor\t\t---2" << endl;
         cout << "Show line       \t\t---3" << endl;
@@ -151,7 +149,7 @@ int main()
             
             break;
         case 2:
-            isCursorPut = !isCursorPut; // сменить переключатель на противоположный знак
+            isCursorPut = !isCursorPut; 
             break;
         case 3:
             if (isCursorPut)
