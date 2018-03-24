@@ -1,16 +1,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <map>
-#include <codecvt>
 #include <locale>
-#include <fcntl.h>
-#include <io.h>
 #include <vector>
 #include <algorithm>
-#include <iterator>
 #include <Windows.h>
-#include <list>
 #include <conio.h>
 using namespace std;
 
