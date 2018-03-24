@@ -2,9 +2,14 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <codecvt>
+#include <locale>
+#include <fcntl.h>
+#include <io.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <Windows.h>
 #include <list>
 #include <conio.h>
 using namespace std;
@@ -46,7 +51,19 @@ public:
     wstring getNum();
     wstring getbday();
     bool find(wstring input);
+    friend wostream& operator<<(wostream& os, const info& dt);
+    friend wistream& operator>>(wistream& is, info& dt);
 };
+wostream& operator<<(wostream& os, const info& dt)
+{
+    os << dt.fName << ' ' << dt.sName << ' ' << dt.mName << ' ' << dt.phnum << ' ' << dt.bday;
+    return os;
+}
+wistream& operator>>(wistream& is, info& dt)
+{
+    is >> dt.fName >> dt.sName >> dt.mName >> dt.phnum >> dt.bday;
+    return is;
+}
 
 void info::setNames(wstring _fName, wstring _sName, wstring _mName)
 {
@@ -146,6 +163,7 @@ public:
     bool ifEmpty();
     bool save();
     bool read();
+
 };
 
 bool contacts::ifEmpty()
@@ -224,32 +242,49 @@ void contacts::del(int _id)
 }
 bool contacts::save()
 {
-    int quantity = ppl.first.size();
-    wofstream file("contacts.txt");
-    if (!file.is_open())
+    wofstream file(L"contacts.txt");
+    if (!file)
     {
         file.close();
         return 0;
     }
-    file << quantity << endl;
-    for (int i = 0; i < quantity; i++)
-        file << ppl.first[i].getfName() << " " << ppl.first[i].getsName() << " " << ppl.first[i].getmName() << " " << ppl.first[i].getNum() << " " << ppl.first[i].getbday() << endl;
+    file.imbue(std::locale("rus_rus.1251"));
+    if (!notempty)
+    {
+        file << L"empty";
+        return 1;
+    }
+    for (int i = 0; i < ppl.first.size(); i++)
+    {
+        file << ppl.first[i] << L" " << ppl.second[i] << "\n";
+    }
+    file << L"end";
     file.close();
     return 1;
 }
 bool contacts::read()
 {
-    wifstream file("contacts.txt");
+    wifstream file(L"contacts.txt");
     if (!file.is_open())
         return 0;
-    int quantity;
-    wstring buff;
     ppl.first.erase(ppl.first.begin(), ppl.first.end());
-    file >> quantity;
-    for (int i = 0; i < quantity; i++)
+    ppl.second.erase(ppl.second.begin(), ppl.second.end());
+    info buff1;
+    bool buff2;
+    file.imbue(std::locale("rus_rus.1251"));
+    while (true)
     {
-
+        file >> buff1;
+        if (buff1.getfName() == L"end")
+            break;
+        if (buff1.getfName() == L"empty")
+            break;
+        createNew(buff1);
+        file >> buff2;
+        ppl.second[ppl.second.size() - 1] = buff2;
     }
+    file.close();
+    return 1;
 }
 info contacts::getinfo(int id)
 {
@@ -269,9 +304,9 @@ int main()
     m.createNew(tmp);
     tmp.setStrings(L"Эдгар", L"Аллан", L"По", L"19.01.1809", L"41(835)18822");
     m.createNew(tmp);
-    tmp.setStrings(L"Дайенерис", L"Таргариен", L"Матерьдраконов", L"289 до В.Э.", L"51(63)860-8477");
+    tmp.setStrings(L"Дайенерис", L"Таргариен", L"Матерьдраконов", L"289", L"51(63)860-8477");
     m.createNew(tmp);
-    tmp.setStrings(L"Джейме", L"Ланнистер", L"Цареубийца", L"260 до В.Э.", L"9(27)802-9155");
+    tmp.setStrings(L"Джейме", L"Ланнистер", L"Цареубийца", L"260", L"9(27)802-9155");
     m.createNew(tmp);
     vector <int> find;
     vector <int> chosen;
@@ -283,35 +318,33 @@ int main()
     int i;
     bool menu1 = 1;
     bool menu2 = 1;
-    /*i = _getch();
-    wcout << i;
-    system("pause");*/
     while (menu1)
     {
         bool menu2 = 1;
+        Sleep(40);
         system("cls");
-        wcout << "\n\n\n\t\t\tMENU";
+        wcout << L"\n\n\n\t\t\tMENU";
         if (cursorpos == -1)
-            wcout << "<-";
+            wcout << L"<-";
         wcout << endl;
         for (int i = 0; i < m.size(); i++)
         {
-            wcout << "\t\t\t";
+            wcout << L"\t\t\t";
             tmp = m.getinfo(i);
-            wcout << tmp.getfName() << " "
-                << tmp.getsName() << " "
+            wcout << tmp.getfName() << L" "
+                << tmp.getsName() << L" "
                 << tmp.getmName();
             if (m.isfavourit(i))
-                wcout << " FAV ";
+                wcout << L" FAV ";
             if (cursorpos == i)
             {
-                wcout << "<-" << endl;
-                wcout << "\t\t\t" << tmp.getNum() << endl;
+                wcout << L"<-" << endl;
+                wcout << L"\t\t\t" << tmp.getNum() << endl;
             }
             else
                 wcout << endl;
         }
-        wcout << "\n\t\t\t" << m.size() << " contacts" << endl;
+        wcout << L"\n\t\t\t" << m.size() << L" contacts" << endl;
         i = _getch();
         switch (i)
         {
@@ -343,26 +376,27 @@ int main()
             {
                 while (menu2)
                 {
+                    Sleep(40);
                     system("cls");
-                    wcout << "\n\n\n\t\t\tSearch ";
+                    wcout << L"\n\n\n\t\t\tSearch";
                     if (cursorpos2 == 0)
-                        wcout << "<-";
+                        wcout << L"<-";
                     wcout << endl;
-                    wcout << "\t\t\tAdd new contact ";
+                    wcout << L"\t\t\tAdd new contact";
                     if (cursorpos2 == 1)
-                        wcout << "<-";
+                        wcout << L"<-";
                     wcout << endl;
-                    wcout << "\t\t\tLoad from file ";
+                    wcout << L"\t\t\tLoad from file";
                     if (cursorpos2 == 2)
-                        wcout << "<-";
+                        wcout << L"<-";
                     wcout << endl;
-                    wcout << "\t\t\tSave to file ";
+                    wcout << L"\t\t\tSave to file";
                     if (cursorpos2 == 3)
-                        wcout << "<-";
+                        wcout << L"<-";
                     wcout << endl;
-                    wcout << "\t\t\tShow all chosen contacts ";
+                    wcout << L"\t\t\tShow all chosen contacts";
                     if (cursorpos2 == 4)
-                        wcout << "<-";
+                        wcout << L"<-";
                     wcout << endl;
                     i = _getch();
                     switch (i)
@@ -378,82 +412,80 @@ int main()
                             cursorpos2 = 4;
                         break;
                     case enter:
-                        //***********
                         switch (cursorpos2)
                         {
                         case 0:
                             system("cls");
-                            wcout << "\n\n\n\t\t\tPlease, input:" << endl;
-                            wcout << "\t\t\t";
+                            wcout << L"\n\n\n\t\t\tPlease, input:";
+                            wcout << L"\n\t\t\t";
                             wcin >> fname;
                             wcout << endl;
                             find = m.search(fname);
                             for (int i = 0; i < find.size(); i++)
                             {
-                                wcout << "\t\t\t";
+                                wcout << L"\t\t\t";
                                 tmp = m.getinfo(find[i]);
-                                wcout << tmp.getfName() << " "
-                                    << tmp.getsName() << " "
-                                    << tmp.getmName() << " "
+                                wcout << tmp.getfName() << L" "
+                                    << tmp.getsName() << L" "
+                                    << tmp.getmName() << L" "
                                     << tmp.getNum() << endl;
                             }
                             wcout << endl;
                             _getch();
                             break;
                         case 1:
-                            wcout << endl;
-                            wcout << "\t\t\t";
-                            wcout << "Name:";
+                            wcout << L"\n\t\t\t";
+                            wcout << L"Name:";
                             wcin >> fname;
                             tmp.setfName(fname);
-                            wcout << endl;
-                            wcout << "\t\t\t";
-                            wcout << "Second name:";
+                            wcout << L"\n\t\t\t";
+                            wcout << L"Second name:";
                             wcin >> fname;
                             tmp.setsName(fname);
-                            wcout << endl;
-                            wcout << "\t\t\t";
-                            wcout << "Middle name:";
+                            wcout << L"\n\t\t\t";
+                            wcout << L"Middle name:";
                             wcin >> fname;
                             tmp.setmName(fname);
-                            wcout << endl;
-                            wcout << "\t\t\t";
-                            wcout << "Birth date:";
+                            wcout << L"\n\t\t\t";
+                            wcout << L"Birth date:";
                             wcin >> fname;
                             tmp.setbday(fname);
-                            wcout << endl;
-                            wcout << "\t\t\t";
-                            wcout << "Ph number:";
+                            wcout << L"\n\t\t\t";
+                            wcout << L"Ph number:";
                             wcin >> fname;
                             tmp.setNum(fname);
-                            wcout << endl;
                             m.createNew(tmp);
                             break;
                         case 2:
-                            wcout << "Load isnt ready";
+                            if (m.read())
+                                wcout << "Everything is done!";
+                            else
+                                wcout << L"Oops something went wrong..";
                             _getch();
                             break;
                         case 3:
-                            wcout << "Save isnt ready";
+                            if (m.save())
+                                wcout << L"Everything is done!";
+                            else
+                                wcout << L"Oops something went wrong..";
                             _getch();
                             break;
                         case 4:
                             system("cls");
-                            wcout << "\n\n\n\t\t\tFavourite contacts:" << endl;
+                            wcout << L"\n\n\n\t\t\tFavourite contacts:" << endl;
                             chosen = m.getallfavourit();
                             for (int i = 0; i < chosen.size(); i++)
                             {
-                                wcout << "\t\t\t";
+                                wcout << L"\t\t\t";
                                 tmp = m.getinfo(chosen[i]);
-                                wcout << tmp.getfName() << " "
-                                    << tmp.getsName() << " "
+                                wcout << tmp.getfName() << L" "
+                                    << tmp.getsName() << L" "
                                     << tmp.getmName() << endl;
                             }
                             wcout << endl;
                             _getch();
                             break;
                         }
-                        //*********
                         break;
                     case esc:
                         cursorpos2 = 0;
@@ -464,19 +496,19 @@ int main()
                 break;
             }
             system("cls");
-            wcout << "\n\n\n\t\t\t";
-            wcout << "Info:" << endl;
-            wcout << "\t\t\t";
+            wcout << L"\n\n\n\t\t\t";
+            wcout << L"Info:" << endl;
+            wcout << L"\t\t\t";
             tmp = m.getinfo(cursorpos);
-            wcout << tmp.getfName() << " "
-                << tmp.getsName() << " "
-                << tmp.getmName() << " "
+            wcout << tmp.getfName() << L" "
+                << tmp.getsName() << L" "
+                << tmp.getmName() << L" "
                 << endl;
-            wcout << "\t\t\tBirth date: "
+            wcout << L"\t\t\tBirth date: "
                 << tmp.getbday() << endl;
-            wcout << "\t\t\tPhone number: "
-                << tmp.getNum() << "\n\n\n\t\t\t";
-            wcout << "Press enter to favour contact\n\t\t\tEsc to unfavour\n\t\t\tSpace to edit\n\t\t\tDel to delete this item";
+            wcout << L"\t\t\tPhone number: "
+                << tmp.getNum() << L"\n\n\n\t\t\t";
+            wcout << L"Press enter to favour contact\n\t\t\tEsc to unfavour\n\t\t\tSpace to edit\n\t\t\tDel to delete this item";
             i = _getch();
             bool ch = 0;
             switch (i)
@@ -490,32 +522,26 @@ int main()
                 m.favourit(cursorpos, ch);
                 break;
             case space:
-                wcout << endl;
-                wcout << "\t\t\t";
-                wcout << "Name:";
+                wcout << L"\n\t\t\t";
+                wcout << L"Name:";
                 wcin >> fname;
                 tmp.setfName(fname);
-                wcout << endl;
-                wcout << "\t\t\t";
-                wcout << "Second name:";
+                wcout << L"\n\t\t\t";
+                wcout << L"Second name:";
                 wcin >> fname;
                 tmp.setsName(fname);
-                wcout << endl;
-                wcout << "\t\t\t";
-                wcout << "Middle name:";
+                wcout << L"\n\t\t\t";
+                wcout << L"Middle name:";
                 wcin >> fname;
                 tmp.setmName(fname);
-                wcout << endl;
-                wcout << "\t\t\t";
-                wcout << "Birth date:";
+                wcout << L"\n\t\t\t";
+                wcout << L"Birth date:";
                 wcin >> fname;
                 tmp.setbday(fname);
-                wcout << endl;
-                wcout << "\t\t\t";
-                wcout << "Ph number:";
+                wcout << L"\n\t\t\t";
+                wcout << L"Ph number:";
                 wcin >> fname;
                 tmp.setNum(fname);
-                wcout << endl;
                 m.changeInfo(tmp, cursorpos);
                 break;
             case delete:
