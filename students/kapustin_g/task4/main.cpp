@@ -4,6 +4,7 @@
 #include <locale>
 #include <vector>
 #include <algorithm>
+#include <wchar.h>
 #include <Windows.h>
 #include <conio.h>
 using namespace std;
@@ -25,14 +26,11 @@ private:
     wstring phnum;
 public:
     info() = default;
-    info(wstring fname, wstring sname, wstring mname, wstring bday, wstring _phnumb) :
-        fName(fname), sName(sname), mName(mname), bday(bday), phnum(_phnumb)
-    {}
+    info(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum);
     info(wstring _bday, wstring _phnum) :
-        bday(_bday), phnum(_phnum)
-    {}
+        bday(_bday), phnum(_phnum) {}
     void setinfo(info _m);
-    void setStrings(wstring fname, wstring sname, wstring mname, wstring _bday, wstring numb);
+    void setStrings(wstring fname, wstring sname, wstring mname, wstring _bday, wstring num);
     void setNames(wstring _fName, wstring _sName, wstring _mName);
     void setbday(wstring _bday);
     void setNum(wstring _num);
@@ -45,8 +43,18 @@ public:
     wstring getNum();
     wstring getbday();
     bool find(wstring input);
+    bool findByFirstLetter(wchar_t input);
     friend wostream& operator<<(wostream& os, const info& dt);
     friend wistream& operator>>(wistream& is, info& dt);
+    info& operator=(const info& v)
+    {
+        fName = v.fName;
+        sName = v.sName;
+        mName = v.mName;
+        bday = v.bday;
+        phnum = v.phnum;
+        return *this;
+    }
 };
 wostream& operator<<(wostream& os, const info& dt)
 {
@@ -58,7 +66,8 @@ wistream& operator>>(wistream& is, info& dt)
     is >> dt.fName >> dt.sName >> dt.mName >> dt.phnum >> dt.bday;
     return is;
 }
-
+info::info(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum):
+    fName(_fName), sName(_sName), mName(_mName), bday(_bday), phnum(_phnum) {}
 void info::setNames(wstring _fName, wstring _sName, wstring _mName)
 {
     fName = _fName;
@@ -73,12 +82,12 @@ void info::setinfo(info _m)
     bday = _m.bday;
     phnum = _m.phnum;
 }
-void info::setStrings(wstring fname, wstring sname, wstring mname, wstring bDay, wstring _phnum)
+void info::setStrings(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum)
 {
-    fName = fname;
-    sName = sname;
-    mName = mname;
-    bday = bDay;
+    fName = _fName;
+    sName = _sName;
+    mName = _mName;
+    bday = _bday;
     phnum = _phnum;
 }
 wstring info::getfName()
@@ -127,6 +136,12 @@ bool info::find(wstring input)
         return 1;
     else return 0;
 }
+bool info::findByFirstLetter(wchar_t input)
+{
+    if (fName[0] == input || sName[0] == input || mName[0] == input)
+        return 1;
+    return 0;
+}
 bool operator<(info &lhs, info &rhs)
 {
     if (lhs.getfName() == rhs.getfName())
@@ -141,8 +156,8 @@ bool operator<(info &lhs, info &rhs)
 class contacts
 {
 private:
-    pair < vector <info>, vector <bool> > ppl; // пара векторов: информация о контакте, bool признак избран ли контакт
-    bool notempty = 0;                         // 0 - класс не содержит в себе информации, 1 - содержит
+    pair < vector <info>, vector <bool> > ppl; // РїР°СЂР° РІРµРєС‚РѕСЂРѕРІ: РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РєРѕРЅС‚Р°РєС‚Рµ, bool РїСЂРёР·РЅР°Рє РёР·Р±СЂР°РЅ Р»Рё РєРѕРЅС‚Р°РєС‚
+    bool notempty = 0;                         // 0 - РєР»Р°СЃСЃ РЅРµ СЃРѕРґРµСЂР¶РёС‚ РІ СЃРµР±Рµ РёРЅС„РѕСЂРјР°С†РёРё, 1 - СЃРѕРґРµСЂР¶РёС‚
 public:
     contacts() = default;
     void createNew(info _ppl);
@@ -151,7 +166,8 @@ public:
     void favourit(int id, bool i);
     bool isfavourit(int id);
     vector <int> getallfavourit();
-    vector <int> search(wstring str);
+    vector <int> find(wstring str);
+    vector <int> findByFirstLetter(wchar_t input);
     int size();
     info getinfo(int id);
     bool ifEmpty();
@@ -166,8 +182,8 @@ bool contacts::ifEmpty()
 }
 void contacts::createNew(info _ppl)
 {
-    if (!notempty && !ppl.first.empty()) // 0 элементов в классе означает, что контейнеры хранят одно пустое значение
-    {                                    // и notrempty = 0
+    if (!notempty && !ppl.first.empty()) // 0 СЌР»РµРјРµРЅС‚РѕРІ РІ РєР»Р°СЃСЃРµ РѕР·РЅР°С‡Р°РµС‚, С‡С‚Рѕ РєРѕРЅС‚РµР№РЅРµСЂС‹ С…СЂР°РЅСЏС‚ РѕРґРЅРѕ РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
+    {                                    // Рё notrempty = 0
         ppl.first[0].setinfo(_ppl);
         notempty = 1;
         return;
@@ -184,12 +200,22 @@ void contacts::changeInfo(info _ppl, int _id)
     ppl.first[_id] = _ppl;
     sort(ppl.first.begin(), ppl.first.end());
 }
-vector <int> contacts::search(wstring str)
+vector <int> contacts::find(wstring str)
 {
     vector <int> matchesId;
     for (int i = 0; i < ppl.first.size(); i++)
     {
         if (ppl.first[i].find(str))
+            matchesId.push_back(i);
+    }
+    return matchesId;
+}
+vector <int> contacts::findByFirstLetter(wchar_t input)
+{
+    vector <int> matchesId;
+    for (int i = 0; i < ppl.first.size(); i++)
+    {
+        if (ppl.first[i].findByFirstLetter(input))
             matchesId.push_back(i);
     }
     return matchesId;
@@ -226,7 +252,7 @@ void contacts::del(int _id)
         }
     if (ppl.first.size() == 1)
     {
-        ppl.first[0].setStrings(L"", L"", L"", L"", L""); // установка пустых строк
+        ppl.first[0].setStrings(L"", L"", L"", L"", L""); // СѓСЃС‚Р°РЅРѕРІРєР° РїСѓСЃС‚С‹С… СЃС‚СЂРѕРє
         ppl.second[0] = 0;
         notempty = 0;
         return;
@@ -259,7 +285,7 @@ bool contacts::save()
 bool contacts::read()
 {
     wifstream file(L"contacts.txt");
-    if (!file.is_open())
+    if (!file)
         return 0;
     ppl.first.erase(ppl.first.begin(), ppl.first.end());
     ppl.second.erase(ppl.second.begin(), ppl.second.end());
@@ -272,7 +298,10 @@ bool contacts::read()
         if (buff1.getfName() == L"end")
             break;
         if (buff1.getfName() == L"empty")
+        {
+            notempty = 0;
             break;
+        }
         createNew(buff1);
         file >> buff2;
         ppl.second[ppl.second.size() - 1] = buff2;
@@ -289,18 +318,18 @@ int main()
 {
     wcout.imbue(locale("rus_rus.866"));
     wcin.imbue(locale("rus_rus.866"));
-    wcout << L"\n\n\n\t\t\tНавигация по программе осуществляется стрелками вверх вниз, esc и enter";
+    wcout << L"\n\n\n\t\t\tРќР°РІРёРіР°С†РёСЏ РїРѕ РїСЂРѕРіСЂР°РјРјРµ РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ СЃС‚СЂРµР»РєР°РјРё РІРІРµСЂС… РІРЅРёР·, esc Рё enter";
     _getch();
     contacts m;
-    info tmp(L"Людвиг", L"Бетховен", L"Иоганнович", L"16.1770", L"+71212462");
+    info tmp(L"Р›СЋРґРІРёРі", L"Р‘РµС‚С…РѕРІРµРЅ", L"РРѕРіР°РЅРЅРѕРІРёС‡", L"16.1770", L"+71212462");
     m.createNew(tmp);
-    tmp.setStrings(L"Альберт", L"Эйнштейн", L"Германович", L"14.03.1879", L"012725(3)");
+    tmp.setStrings(L"РђР»СЊР±РµСЂС‚", L"Р­Р№РЅС€С‚РµР№РЅ", L"Р“РµСЂРјР°РЅРѕРІРёС‡", L"14.03.1879", L"012725(3)");
     m.createNew(tmp);
-    tmp.setStrings(L"Эдгар", L"Аллан", L"По", L"19.01.1809", L"41(835)18822");
+    tmp.setStrings(L"Р­РґРіР°СЂ", L"РђР»Р»Р°РЅ", L"РџРѕ", L"19.01.1809", L"41(835)18822");
     m.createNew(tmp);
-    tmp.setStrings(L"Дайенерис", L"Таргариен", L"Матерьдраконов", L"289", L"51(63)860-8477");
+    tmp.setStrings(L"Р”Р°Р№РµРЅРµСЂРёСЃ", L"РўР°СЂРіР°СЂРёРµРЅ", L"РњР°С‚РµСЂСЊРґСЂР°РєРѕРЅРѕРІ", L"289", L"51(63)860-8477");
     m.createNew(tmp);
-    tmp.setStrings(L"Джейме", L"Ланнистер", L"Цареубийца", L"260", L"9(27)802-9155");
+    tmp.setStrings(L"Р”Р¶РµР№РјРµ", L"Р›Р°РЅРЅРёСЃС‚РµСЂ", L"Р¦Р°СЂРµСѓР±РёР№С†Р°", L"260", L"9(27)802-9155");
     m.createNew(tmp);
     vector <int> find;
     vector <int> chosen;
@@ -372,24 +401,28 @@ int main()
                 {
                     Sleep(40);
                     system("cls");
-                    wcout << L"\n\n\n\t\t\tSearch";
+                    wcout << L"\n\n\n\t\t\tSearch by full name or ph number";
                     if (cursorpos2 == 0)
                         wcout << L"<-";
                     wcout << endl;
-                    wcout << L"\t\t\tAdd new contact";
+                    wcout << L"\t\t\tSearch by first letter in full name";
                     if (cursorpos2 == 1)
                         wcout << L"<-";
                     wcout << endl;
-                    wcout << L"\t\t\tLoad from file";
+                    wcout << L"\t\t\tAdd new contact";
                     if (cursorpos2 == 2)
                         wcout << L"<-";
                     wcout << endl;
-                    wcout << L"\t\t\tSave to file";
+                    wcout << L"\t\t\tLoad from file";
                     if (cursorpos2 == 3)
                         wcout << L"<-";
                     wcout << endl;
-                    wcout << L"\t\t\tShow all chosen contacts";
+                    wcout << L"\t\t\tSave to file";
                     if (cursorpos2 == 4)
+                        wcout << L"<-";
+                    wcout << endl;
+                    wcout << L"\t\t\tShow all chosen contacts";
+                    if (cursorpos2 == 5)
                         wcout << L"<-";
                     wcout << endl;
                     i = _getch();
@@ -397,13 +430,13 @@ int main()
                     {
                     case darrow:
                         cursorpos2++;
-                        if (cursorpos2 > 4)
+                        if (cursorpos2 > 5)
                             cursorpos2 = 0;
                         break;
                     case uparrow:
                         cursorpos2--;
                         if (cursorpos2 < 0)
-                            cursorpos2 = 4;
+                            cursorpos2 = 5;
                         break;
                     case enter:
                         switch (cursorpos2)
@@ -414,7 +447,7 @@ int main()
                             wcout << L"\n\t\t\t";
                             wcin >> fname;
                             wcout << endl;
-                            find = m.search(fname);
+                            find = m.find(fname);
                             for (int i = 0; i < find.size(); i++)
                             {
                                 wcout << L"\t\t\t";
@@ -428,6 +461,25 @@ int main()
                             _getch();
                             break;
                         case 1:
+                            system("cls");
+                            wcout << L"\n\n\n\t\t\tPlease input one character:";
+                            wcout << L"\n\t\t\t";
+                            wchar_t buf;
+                            wcin >> buf;
+                            wcout << endl;
+                            find = m.findByFirstLetter(buf);
+                            for (int i = 0; i < find.size(); i++)
+                            {
+                                wcout << L"\t\t\t";
+                                tmp = m.getinfo(find[i]);
+                                wcout << tmp.getfName() << L" "
+                                    << tmp.getsName() << L" "
+                                    << tmp.getmName() << endl;
+                            }
+                            wcout << endl;
+                            _getch();
+                            break;
+                        case 2:
                             wcout << L"\n\t\t\t";
                             wcout << L"Name:";
                             wcin >> fname;
@@ -450,21 +502,21 @@ int main()
                             tmp.setNum(fname);
                             m.createNew(tmp);
                             break;
-                        case 2:
+                        case 3:
                             if (m.read())
                                 wcout << "Everything is done!";
                             else
                                 wcout << L"Oops something went wrong..";
                             _getch();
                             break;
-                        case 3:
+                        case 4:
                             if (m.save())
                                 wcout << L"Everything is done!";
                             else
                                 wcout << L"Oops something went wrong..";
                             _getch();
                             break;
-                        case 4:
+                        case 5:
                             system("cls");
                             wcout << L"\n\n\n\t\t\tFavourite contacts:" << endl;
                             chosen = m.getallfavourit();
