@@ -3,6 +3,7 @@
 #include <fstream>
 #include <locale>
 #include <vector>
+#include <fcntl.h>
 #include <algorithm>
 #include <wchar.h>
 #include <Windows.h>
@@ -22,26 +23,26 @@ private:
     wstring fName;
     wstring sName;
     wstring mName;
-    wstring bday;
+    wstring birthDay;
     wstring phnum;
 public:
     info() = default;
-    info(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum);
-    info(wstring _bday, wstring _phnum) :
-        bday(_bday), phnum(_phnum) {}
-    void setinfo(info _m);
-    void setStrings(wstring fname, wstring sname, wstring mname, wstring _bday, wstring num);
+    info(wstring _fName, wstring _sName, wstring _mName, wstring _birthDay, wstring _phnum);
+    info(wstring _birthDay, wstring _phnum) :
+        birthDay(_birthDay), phnum(_phnum) {}
+    void setInfo(info _m);
+    void setStrings(wstring _fMame, wstring _sName, wstring _mName, wstring _birthDay, wstring _phnum);
     void setNames(wstring _fName, wstring _sName, wstring _mName);
-    void setbday(wstring _bday);
+    void setBirthDay(wstring _birthDay);
     void setNum(wstring _num);
-    void setfName(wstring _fName);
-    void setsName(wstring _sName);
-    void setmName(wstring _mName);
-    wstring getfName();
-    wstring getsName();
-    wstring getmName();
+    void setFName(wstring _fName);
+    void setSName(wstring _sName);
+    void setMName(wstring _mName);
+    wstring getFName();
+    wstring getSName();
+    wstring getMName();
     wstring getNum();
-    wstring getbday();
+    wstring getBirthDay();
     bool find(wstring input);
     bool findByFirstLetter(wchar_t input);
     friend wostream& operator<<(wostream& os, const info& dt);
@@ -51,60 +52,61 @@ public:
         fName = v.fName;
         sName = v.sName;
         mName = v.mName;
-        bday = v.bday;
+        birthDay = v.birthDay;
         phnum = v.phnum;
         return *this;
     }
 };
+
 wostream& operator<<(wostream& os, const info& dt)
 {
-    os << dt.fName << ' ' << dt.sName << ' ' << dt.mName << ' ' << dt.phnum << ' ' << dt.bday;
+    os << dt.fName << ' ' << dt.sName << ' ' << dt.mName << ' ' << dt.phnum << ' ' << dt.birthDay;
     return os;
 }
 wistream& operator>>(wistream& is, info& dt)
 {
-    is >> dt.fName >> dt.sName >> dt.mName >> dt.phnum >> dt.bday;
+    is >> dt.fName >> dt.sName >> dt.mName >> dt.phnum >> dt.birthDay;
     return is;
 }
-info::info(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum):
-    fName(_fName), sName(_sName), mName(_mName), bday(_bday), phnum(_phnum) {}
+info::info(wstring _fName, wstring _sName, wstring _mName, wstring _birthDay, wstring _phnum):
+    fName(_fName), sName(_sName), mName(_mName), birthDay(_birthDay), phnum(_phnum) {}
 void info::setNames(wstring _fName, wstring _sName, wstring _mName)
 {
     fName = _fName;
     sName = _sName;
     mName = _mName;
 }
-void info::setinfo(info _m)
+void info::setInfo(info _m)
 {
     fName = _m.fName;
     sName = _m.sName;
     mName = _m.mName;
-    bday = _m.bday;
+    birthDay = _m.birthDay;
     phnum = _m.phnum;
 }
-void info::setStrings(wstring _fName, wstring _sName, wstring _mName, wstring _bday, wstring _phnum)
+void info::setStrings(wstring _fName, wstring _sName, wstring _mName, wstring _birthDay, wstring _phnum)
 {
     fName = _fName;
     sName = _sName;
     mName = _mName;
-    bday = _bday;
+    birthDay = _birthDay;
     phnum = _phnum;
 }
-wstring info::getfName()
+wstring info::getFName()
 {
     return fName;
 }
-wstring info::getsName()
+wstring info::getSName()
 {
     return sName;
 }
-wstring info::getmName()
+wstring info::getMName()
 {
     return mName;
 }
-void info::setbday(wstring _bday)
+void info::setBirthDay(wstring _birthDay)
 {
-    bday = _bday;
+    birthDay = _birthDay;
 }
 void info::setNum(wstring _phnum)
 {
@@ -114,19 +116,19 @@ wstring info::getNum()
 {
     return phnum;
 }
-wstring info::getbday()
+wstring info::getBirthDay()
 {
-    return bday;
+    return birthDay;
 }
-void info::setfName(wstring _fName)
+void info::setFName(wstring _fName)
 {
     fName = _fName;
 }
-void info::setsName(wstring _sName)
+void info::setSName(wstring _sName)
 {
     sName = _sName;
 }
-void info::setmName(wstring _mName)
+void info::setMName(wstring _mName)
 {
     mName = _mName;
 }
@@ -144,13 +146,13 @@ bool info::findByFirstLetter(wchar_t input)
 }
 bool operator<(info &lhs, info &rhs)
 {
-    if (lhs.getfName() == rhs.getfName())
-        if (lhs.getsName() == rhs.getsName())
-            return lhs.getmName() < rhs.getmName();
+    if (lhs.getFName() == rhs.getFName())
+        if (lhs.getSName() == rhs.getSName())
+            return lhs.getMName() < rhs.getMName();
         else
-            return lhs.getsName() < rhs.getsName();
+            return lhs.getSName() < rhs.getSName();
     else
-        return lhs.getfName() < rhs.getfName();
+        return lhs.getFName() < rhs.getFName();
 }
 
 class contacts
@@ -161,19 +163,18 @@ private:
 public:
     contacts() = default;
     void createNew(info _ppl);
-    void del(int _id);
-    void changeInfo(info _ppl, int _id);
+    void del(int id);
+    void changeInfo(info _ppl, int id);
     void favourit(int id, bool i);
-    bool isfavourit(int id);
-    vector <int> getallfavourit();
+    bool isFavourit(int id);
+    vector <int> getAllFavourit();
     vector <int> find(wstring str);
     vector <int> findByFirstLetter(wchar_t input);
     int size();
-    info getinfo(int id);
+    info getInfo(int id);
     bool ifEmpty();
     bool save();
     bool read();
-
 };
 
 bool contacts::ifEmpty()
@@ -184,7 +185,7 @@ void contacts::createNew(info _ppl)
 {
     if (!notempty && !ppl.first.empty()) // 0 элементов в классе означает, что контейнеры хранят одно пустое значение
     {                                    // и notrempty = 0
-        ppl.first[0].setinfo(_ppl);
+        ppl.first[0].setInfo(_ppl);
         notempty = 1;
         return;
     }
@@ -193,11 +194,11 @@ void contacts::createNew(info _ppl)
     sort(ppl.first.begin(), ppl.first.end());
     notempty = 1;
 }
-void contacts::changeInfo(info _ppl, int _id)
+void contacts::changeInfo(info _ppl, int id)
 {
-    if ((!notempty) && _id == 0)
+    if ((!notempty) && id == 0)
         notempty = 1;
-    ppl.first[_id] = _ppl;
+    ppl.first[id] = _ppl;
     sort(ppl.first.begin(), ppl.first.end());
 }
 vector <int> contacts::find(wstring str)
@@ -230,11 +231,11 @@ void contacts::favourit(int id, bool i)
 {
     ppl.second[id] = i;
 }
-bool contacts::isfavourit(int id)
+bool contacts::isFavourit(int id)
 {
     return ppl.second[id];
 }
-vector <int> contacts::getallfavourit()
+vector <int> contacts::getAllFavourit()
 {
     vector <int> matchesId;
     for (int i = 0; i < ppl.first.size(); i++)
@@ -242,10 +243,10 @@ vector <int> contacts::getallfavourit()
             matchesId.push_back(i);
     return matchesId;
 }
-void contacts::del(int _id)
+void contacts::del(int id)
 {
-    if (_id != (ppl.first.size() - 1))
-        for (int i = _id; i < ppl.first.size() - 1; i++)
+    if (id != (ppl.first.size() - 1))
+        for (int i = id; i < ppl.first.size() - 1; i++)
         {
             ppl.first[i] = ppl.first[i + 1];
             ppl.second[i] = ppl.second[i + 1];
@@ -295,9 +296,9 @@ bool contacts::read()
     while (true)
     {
         file >> buff1;
-        if (buff1.getfName() == L"end")
+        if (buff1.getFName() == L"end")
             break;
-        if (buff1.getfName() == L"empty")
+        if (buff1.getFName() == L"empty")
         {
             notempty = 0;
             break;
@@ -309,15 +310,15 @@ bool contacts::read()
     file.close();
     return 1;
 }
-info contacts::getinfo(int id)
+info contacts::getInfo(int id)
 {
     return ppl.first[id];
 }
 
 int main()
 {
-    wcout.imbue(locale("rus_rus.866"));
-    wcin.imbue(locale("rus_rus.866"));
+    SetConsoleCP(866);
+    SetConsoleOutputCP(866);
     wcout << L"\n\n\n\t\t\tНавигация по программе осуществляется стрелками вверх вниз, esc и enter";
     _getch();
     contacts m;
@@ -353,11 +354,11 @@ int main()
         for (int i = 0; i < m.size(); i++)
         {
             wcout << L"\t\t\t";
-            tmp = m.getinfo(i);
-            wcout << tmp.getfName() << L" "
-                << tmp.getsName() << L" "
-                << tmp.getmName();
-            if (m.isfavourit(i))
+            tmp = m.getInfo(i);
+            wcout << tmp.getFName() << L" "
+                << tmp.getSName() << L" "
+                << tmp.getMName();
+            if (m.isFavourit(i))
                 wcout << L" FAV ";
             if (cursorpos == i)
             {
@@ -451,10 +452,10 @@ int main()
                             for (int i = 0; i < find.size(); i++)
                             {
                                 wcout << L"\t\t\t";
-                                tmp = m.getinfo(find[i]);
-                                wcout << tmp.getfName() << L" "
-                                    << tmp.getsName() << L" "
-                                    << tmp.getmName() << L" "
+                                tmp = m.getInfo(find[i]);
+                                wcout << tmp.getFName() << L" "
+                                    << tmp.getSName() << L" "
+                                    << tmp.getMName() << L" "
                                     << tmp.getNum() << endl;
                             }
                             wcout << endl;
@@ -471,10 +472,10 @@ int main()
                             for (int i = 0; i < find.size(); i++)
                             {
                                 wcout << L"\t\t\t";
-                                tmp = m.getinfo(find[i]);
-                                wcout << tmp.getfName() << L" "
-                                    << tmp.getsName() << L" "
-                                    << tmp.getmName() << endl;
+                                tmp = m.getInfo(find[i]);
+                                wcout << tmp.getFName() << L" "
+                                    << tmp.getSName() << L" "
+                                    << tmp.getMName() << endl;
                             }
                             wcout << endl;
                             _getch();
@@ -483,19 +484,19 @@ int main()
                             wcout << L"\n\t\t\t";
                             wcout << L"Name:";
                             wcin >> fname;
-                            tmp.setfName(fname);
+                            tmp.setFName(fname);
                             wcout << L"\n\t\t\t";
                             wcout << L"Second name:";
                             wcin >> fname;
-                            tmp.setsName(fname);
+                            tmp.setSName(fname);
                             wcout << L"\n\t\t\t";
                             wcout << L"Middle name:";
                             wcin >> fname;
-                            tmp.setmName(fname);
+                            tmp.setMName(fname);
                             wcout << L"\n\t\t\t";
                             wcout << L"Birth date:";
                             wcin >> fname;
-                            tmp.setbday(fname);
+                            tmp.setBirthDay(fname);
                             wcout << L"\n\t\t\t";
                             wcout << L"Ph number:";
                             wcin >> fname;
@@ -519,14 +520,14 @@ int main()
                         case 5:
                             system("cls");
                             wcout << L"\n\n\n\t\t\tFavourite contacts:" << endl;
-                            chosen = m.getallfavourit();
+                            chosen = m.getAllFavourit();
                             for (int i = 0; i < chosen.size(); i++)
                             {
                                 wcout << L"\t\t\t";
-                                tmp = m.getinfo(chosen[i]);
-                                wcout << tmp.getfName() << L" "
-                                    << tmp.getsName() << L" "
-                                    << tmp.getmName() << endl;
+                                tmp = m.getInfo(chosen[i]);
+                                wcout << tmp.getFName() << L" "
+                                    << tmp.getSName() << L" "
+                                    << tmp.getMName() << endl;
                             }
                             wcout << endl;
                             _getch();
@@ -545,13 +546,13 @@ int main()
             wcout << L"\n\n\n\t\t\t";
             wcout << L"Info:" << endl;
             wcout << L"\t\t\t";
-            tmp = m.getinfo(cursorpos);
-            wcout << tmp.getfName() << L" "
-                << tmp.getsName() << L" "
-                << tmp.getmName() << L" "
+            tmp = m.getInfo(cursorpos);
+            wcout << tmp.getFName() << L" "
+                << tmp.getSName() << L" "
+                << tmp.getMName() << L" "
                 << endl;
             wcout << L"\t\t\tBirth date: "
-                << tmp.getbday() << endl;
+                << tmp.getBirthDay() << endl;
             wcout << L"\t\t\tPhone number: "
                 << tmp.getNum() << L"\n\n\n\t\t\t";
             wcout << L"Press enter to favour contact\n\t\t\tEsc to unfavour\n\t\t\tSpace to edit\n\t\t\tDel to delete this item";
@@ -571,19 +572,19 @@ int main()
                 wcout << L"\n\t\t\t";
                 wcout << L"Name:";
                 wcin >> fname;
-                tmp.setfName(fname);
+                tmp.setFName(fname);
                 wcout << L"\n\t\t\t";
                 wcout << L"Second name:";
                 wcin >> fname;
-                tmp.setsName(fname);
+                tmp.setSName(fname);
                 wcout << L"\n\t\t\t";
                 wcout << L"Middle name:";
                 wcin >> fname;
-                tmp.setmName(fname);
+                tmp.setMName(fname);
                 wcout << L"\n\t\t\t";
                 wcout << L"Birth date:";
                 wcin >> fname;
-                tmp.setbday(fname);
+                tmp.setBirthDay(fname);
                 wcout << L"\n\t\t\t";
                 wcout << L"Ph number:";
                 wcin >> fname;
@@ -591,7 +592,7 @@ int main()
                 m.changeInfo(tmp, cursorpos);
                 break;
             case delete:
-                m.del(cursorpos);
+                m.del(cursorpos );
                 if (cursorpos == m.size())
                     cursorpos--;
                 break;
