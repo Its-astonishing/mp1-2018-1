@@ -3,7 +3,7 @@
 #include <string>
 #include <cmath>
 using namespace std;
-struct creditsInfo
+struct creditInfo
 {
     int duty=0;
     int creditTime=0;
