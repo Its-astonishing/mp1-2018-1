@@ -56,7 +56,7 @@ public:
     unsigned int getInstantDuty(const size_t& i) const;
     void setPercentageRate(const size_t& i, const double& rate);
     double getPercentageRate(const size_t& i) const;
-    void setCreditTime(const size_t& i, const unsigned int& mouth);
+    void setCreditTime(const size_t& i, const unsigned int& month);
     unsigned int getCreditTime(const size_t& i) const;
     void minusCreditTime(const size_t& i);
     bool isCreditTaken(const size_t& i) const;
@@ -127,9 +127,9 @@ double processingCenter::getPercentageRate(const size_t& i) const
 {
     return people[i].percentageRate;
 }
-void processingCenter::setCreditTime(const size_t& i, const unsigned int& mounth)
+void processingCenter::setCreditTime(const size_t& i, const unsigned int& month)
 {
-    people[i].creditTime = mounth;
+    people[i].creditTime = month;
 }
 unsigned int processingCenter::getCreditTime(const size_t& i) const
 {
