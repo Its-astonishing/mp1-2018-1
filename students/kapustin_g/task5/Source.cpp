@@ -41,101 +41,101 @@ private:
     vector <client> people;
 public:
     processingCenter() = default;
-    void addNew(client seo);
-    size_t size();
-    void setBio(size_t i, string _fName, string _sName, string _mName);
-    void setPassword(size_t i, string _password);
-    bool attemptToLogin(size_t i, string _password);
-    unsigned int getDeposite(size_t i);
-    void depositeAdd(size_t i, unsigned int money);
-    void depositeMinus(size_t i, unsigned int money);
-    void setDuty(size_t i, unsigned int money);
-    unsigned int getDuty(size_t i);
-    void minusDuty(size_t i, unsigned int money);
-    void setInstantDuty(size_t i, unsigned int money);
-    unsigned int getInstantDuty(size_t i);
-    void setPercentageRate(size_t i, double rate);
-    double getPercentageRate(size_t i);
-    void setCreditTime(size_t i, unsigned int mouth);
-    unsigned int getCreditTime(size_t i);
-    void minusCreditTime(size_t i);
-    bool isCreditTaken(size_t i);
+    void addNew(const client& seo);
+    size_t size() const;
+    void setBio(const size_t& i, const string& _fName, const string& _sName, const string& _mName);
+    void setPassword(const size_t& i, const string& _password);
+    bool attemptToLogin(const size_t& i, const string& _password) const;
+    unsigned int getDeposite(const size_t& i) const;
+    void depositeAdd(const size_t& i, const unsigned int& money);
+    void depositeMinus(const size_t& i, const unsigned int& money);
+    void setDuty(const size_t& i, const unsigned int& money);
+    unsigned int getDuty(const size_t& i) const;
+    void minusDuty(const size_t& i, const unsigned int& money);
+    void setInstantDuty(const size_t& i, const unsigned int& money);
+    unsigned int getInstantDuty(const size_t& i) const;
+    void setPercentageRate(const size_t& i, const double& rate);
+    double getPercentageRate(const size_t& i) const;
+    void setCreditTime(const size_t& i, const unsigned int& mouth);
+    unsigned int getCreditTime(const size_t& i) const;
+    void minusCreditTime(const size_t& i);
+    bool isCreditTaken(const size_t& i) const;
 };
-void processingCenter::addNew(client seo)
+void processingCenter::addNew(const client& seo)
 {
     people.push_back(seo);
 }
-size_t processingCenter::size()
+size_t processingCenter::size() const
 {
     return people.size();
 }
-bool processingCenter::isCreditTaken(size_t i)
+bool processingCenter::isCreditTaken(const size_t& i) const
 {
     return (people[i].duty == 0 && people[i].creditTime == 0 && people[i].instantDuty == 0) ? 0 : 1;
 }
-void processingCenter::setBio(size_t i, string _fName, string _sName, string _mName)
+void processingCenter::setBio(const size_t& i, const string& _fName, const string& _sName, const string& _mName)
 {
     people[i].fName = _fName;
     people[i].sName = _sName;
     people[i].mName = _mName;
 }
-void processingCenter::setPassword(size_t i, string _password)
+void processingCenter::setPassword(const size_t& i, const string& _password)
 {
     people[i].password = _password;
 }
-bool processingCenter::attemptToLogin(size_t i, string _password)
+bool processingCenter::attemptToLogin(const size_t& i, const string& _password) const
 {
     return (people[i].password == _password) ? 1 : 0;
 }
-unsigned int processingCenter::getDeposite(size_t i)
+unsigned int processingCenter::getDeposite(const size_t& i) const
 {
     return people[i].deposite;
 }
-void processingCenter::depositeAdd(size_t i, unsigned int money)
+void processingCenter::depositeAdd(const size_t& i, const unsigned int& money)
 {
     people[i].deposite += money;
 }
-void processingCenter::depositeMinus(size_t i, unsigned int money)
+void processingCenter::depositeMinus(const size_t& i, const unsigned int& money)
 {
     people[i].deposite -= money;
 }
-void processingCenter::setDuty(size_t i, unsigned int money)
+void processingCenter::setDuty(const size_t& i, const unsigned int& money)
 {
     people[i].duty = money;
 }
-unsigned int processingCenter::getDuty(size_t i)
+unsigned int processingCenter::getDuty(const size_t& i) const
 {
     return people[i].duty;
 }
-void processingCenter::minusDuty(size_t i, unsigned int money)
+void processingCenter::minusDuty(const size_t& i, const unsigned int& money)
 {
     people[i].duty -= money;
 }
-void processingCenter::setInstantDuty(size_t i, unsigned int money)
+void processingCenter::setInstantDuty(const size_t& i, const unsigned int& money)
 {
     people[i].instantDuty = money;
 }
-unsigned int processingCenter::getInstantDuty(size_t i)
+unsigned int processingCenter::getInstantDuty(const size_t& i) const
 {
     return people[i].instantDuty;
 }
-void processingCenter::setPercentageRate(size_t i, double rate)
+void processingCenter::setPercentageRate(const size_t& i, const double& rate)
 {
     people[i].percentageRate = rate;
 }
-double processingCenter::getPercentageRate(size_t i)
+double processingCenter::getPercentageRate(const size_t& i) const
 {
     return people[i].percentageRate;
 }
-void processingCenter::setCreditTime(size_t i, unsigned int mounth)
+void processingCenter::setCreditTime(const size_t& i, const unsigned int& mounth)
 {
     people[i].creditTime = mounth;
 }
-unsigned int processingCenter::getCreditTime(size_t i)
+unsigned int processingCenter::getCreditTime(const size_t& i) const
 {
     return people[i].creditTime;
 }
-void processingCenter::minusCreditTime(size_t i)
+void processingCenter::minusCreditTime(const size_t& i)
 {
     people[i].creditTime--;
 }
@@ -148,24 +148,24 @@ private:
     bool isSessionActive = 0;
 public:
     credit() {}
-    void addNew(client _client);
-    bool login(short int id, string _password);
+    void addNew(const client& _client);
+    bool login(const short int& id, const string& _password);
     void forcedLogout();
-    bool ifSessionActive();
-    unsigned int getDeposite();
-    bool isCreditAvilable(unsigned int money, unsigned int years);
-    double calculatePercent(unsigned int money, unsigned int years);
-    bool takeCredit(unsigned int money, unsigned int years);
+    bool ifSessionActive() const;
+    unsigned int getDeposite() const;
+    bool isCreditAvilable(const unsigned int& money, const unsigned int& years) const;
+    double calculatePercent(const unsigned int& money, const unsigned int& years) const;
+    bool takeCredit(const unsigned int& money, const unsigned int& years);
     bool payOneMonth();
     bool payArrea();
     bool payAllDuty();
-    short int size();
-    bool isCreditTaken();
-    creditInfo getCreditStatus();
+    short int size() const;
+    bool isCreditTaken() const;
+    creditInfo getCreditStatus() const;
     void depositeChange(int money);
 };
 
-double credit::calculatePercent(unsigned int money, unsigned int years)
+double credit::calculatePercent(const unsigned int& money, const unsigned int& years) const
 {
     if (!isSessionActive)
         return 0;
@@ -197,13 +197,13 @@ double credit::calculatePercent(unsigned int money, unsigned int years)
     percentPerYear = round(percentPerYear * 1000) / 1000;
     return percentPerYear;
 }
-unsigned int credit::getDeposite()
+unsigned int credit::getDeposite() const
 {
     if (!isSessionActive)
         return 0;
     return clients.getDeposite(sessionId);
 }
-bool credit::isCreditAvilable(unsigned int money, unsigned int years)
+bool credit::isCreditAvilable(const unsigned int& money, const unsigned int& years) const
 {
     if (!isSessionActive)
         return 0;
@@ -218,11 +218,11 @@ bool credit::isCreditAvilable(unsigned int money, unsigned int years)
     else
         return 0;
 }
-void credit::addNew(client _client)
+void credit::addNew(const client& _client)
 {
     clients.addNew(_client);
 }
-bool credit::login(short int _id, string _password)
+bool credit::login(const short int& _id, const string& _password)
 {
     if (isSessionActive || _id > clients.size())
         return 0;
@@ -239,11 +239,11 @@ void credit::forcedLogout()
     isSessionActive = 0;
     sessionId = 0;
 }
-bool credit::ifSessionActive()
+bool credit::ifSessionActive() const
 {
     return isSessionActive;
 }
-bool credit::takeCredit(unsigned int money, unsigned int years)
+bool credit::takeCredit(const unsigned int& money, const unsigned int& years)
 {
     if (!isSessionActive || clients.isCreditTaken(sessionId))
         return 0;
@@ -312,17 +312,17 @@ bool credit::payAllDuty()
     }
     return 0;
 }
-short int credit::size()
+short int credit::size() const
 {
     return clients.size();
 }
-bool credit::isCreditTaken()
+bool credit::isCreditTaken() const
 {
     if (!isSessionActive)
         return 0;
     return clients.isCreditTaken(sessionId);
 }
-creditInfo credit::getCreditStatus()
+creditInfo credit::getCreditStatus() const
 {
     creditInfo tmp;
     if (!isSessionActive)
