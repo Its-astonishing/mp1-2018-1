@@ -3,7 +3,8 @@
 #include <SDL_image.h>
 #include <string>
 #include <SDL_ttf.h>
-#include <string>
+#define SCREENH 1104 
+#define SCREENW 768
 
 class drawer
 {
@@ -18,7 +19,8 @@ class drawer
     void freeT();
     void free();
 public:
-    void init(SDL_Window *_gWindow, SDL_Renderer *_gRenderer);
+    void renderPresent();
+    bool init();
     bool loadMedia(); //loads snake sprite into rectangles
     bool loadMediaText();
     void render(int _x, int _y, int i); 

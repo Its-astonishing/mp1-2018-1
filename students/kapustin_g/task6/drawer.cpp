@@ -4,38 +4,68 @@
 
 drawer::drawer()
 {
+
 }
-//bool drawer::init()
-//{
-//    bool success = 1;
-//
-//    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-//        success = false;
-//
-//    else
-//    {
-//        gWindow = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1080, 720, SDL_WINDOW_SHOWN);
-//
-//        if (gWindow == NULL)
-//            success = false;
-//        else
-//        {
-//            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-//
-//            if (gRenderer == NULL)
-//                success = false;
-//            else
-//            {
-//                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-//                int imgFlags = IMG_INIT_PNG;
-//
-//                if (!(IMG_Init(imgFlags) & imgFlags))
-//                    success = false;
-//            }
-//        }
-//    }
-//    return success;
-//}
+void drawer::renderPresent()
+{
+    SDL_RenderPresent(gRenderer);
+}
+bool drawer::init()
+{
+    bool success = true;
+    //Initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+        success = false;
+    }
+    else
+    {
+
+        //Set texture filtering to linear
+        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+        {
+            printf("Warning: Linear texture filtering not enabled!");
+        }
+
+        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENH, SCREENW, SDL_WINDOW_SHOWN);
+        if (gWindow == NULL)
+        {
+            printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+            success = false;
+        }
+        else
+        {
+            //Create renderer for window
+            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+            if (gRenderer == NULL)
+            {
+                printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+                success = false;
+            }
+            else
+            {
+                //Initialize renderer color
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+                //Initialize PNG loading
+                int imgFlags = IMG_INIT_PNG;
+                if (!(IMG_Init(imgFlags) & imgFlags))
+                {
+                    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+                    success = false;
+                }
+                if (TTF_Init() == -1)
+                {
+                    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+                    success = false;
+                }
+            }
+        }
+    }
+
+    return success;
+}
 
 void drawer::free()
 {
@@ -128,11 +158,6 @@ void drawer::render(int _x, int _y, int i)
     SDL_RenderCopy(gRenderer, mTexture, &gSpriteClips[i], &renderQuad);
 }
 
-void drawer::init(SDL_Window *_gWindow, SDL_Renderer *_gRenderer)
-{
-    gWindow = _gWindow;
-    gRenderer = _gRenderer;
-}
 
 bool drawer::loadFromFile(std::string path)
 {
@@ -192,6 +217,10 @@ void drawer::close()
 {
     free();
     freeT();
+    SDL_DestroyRenderer(gRenderer);
+    SDL_DestroyWindow(gWindow);
+    gWindow = NULL;
+    gRenderer = NULL;
     TTF_CloseFont(gFont);
     gFont = NULL;
     IMG_Quit();

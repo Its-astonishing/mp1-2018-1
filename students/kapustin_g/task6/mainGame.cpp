@@ -2,13 +2,9 @@
 
 
 
-mainGame::mainGame()
-{
-    gWindow = NULL;
-    gRenderer = NULL;
-
-}
-int mainGame::step(drawer& dwr,short int dir) // returns: 0 when head hits the walls, 1 when snake moved on field w/out any events, 2 when snake ate an apple
+mainGame::mainGame(snakeObjects &_snake, drawer &_dwr):
+    snake(_snake),dwr(_dwr){ }
+int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when snake moved on field w/out any events, 2 when snake ate an apple
 {
     point _tale = snake.getTail();
     point _head = snake.getHead();
@@ -16,7 +12,7 @@ int mainGame::step(drawer& dwr,short int dir) // returns: 0 when head hits the w
     int k = snake.move(dir);
     if (k == 0)
         return 0;
-    if (snake.isGameLost())
+    if (snake.headAteTale())
         return 0;
     point tale_ = snake.getTail();
     point head_ = snake.getHead();
@@ -33,7 +29,7 @@ int mainGame::step(drawer& dwr,short int dir) // returns: 0 when head hits the w
         dwr.render(_tale.x, _tale.y, 6);
     return k;
 }
-void mainGame::initDraw(drawer& dwr)
+void mainGame::initDraw()
 {
     for (int i = 0; i < 69; i++)
     {
@@ -66,68 +62,13 @@ void mainGame::initDraw(drawer& dwr)
         dwr.render(ssnake[i].x, ssnake[i].y, 4);
     }
     dwr.renderText(64, 0, 80, 28, "Score");
-    drawScore(dwr);
-    SDL_RenderPresent(gRenderer);
+    drawScore();
+    dwr.renderPresent();
 
 }
 
-bool mainGame::init()
-{
-    bool success = true;
-    //Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        success = false;
-    }
-    else
-    {
 
-        //Set texture filtering to linear
-        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-        {
-            printf("Warning: Linear texture filtering not enabled!");
-        }
-
-        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENH, SCREENW, SDL_WINDOW_SHOWN);
-        if (gWindow == NULL)
-        {
-            printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-            success = false;
-        }
-        else
-        {
-            //Create renderer for window
-            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-            if (gRenderer == NULL)
-            {
-                printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-                success = false;
-            }
-            else
-            {
-                //Initialize renderer color
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-                //Initialize PNG loading
-                int imgFlags = IMG_INIT_PNG;
-                if (!(IMG_Init(imgFlags) & imgFlags))
-                {
-                    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-                    success = false;
-                }
-                if (TTF_Init() == -1)
-                {
-                    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-                    success = false;
-                }
-            }
-        }
-    }
-
-    return success;
-}
-void mainGame::drawScore(drawer& dwr)
+void mainGame::drawScore()
 {
     short int points = snake.size() - STARTBLOCKS;
     std::ostringstream ost;
@@ -139,10 +80,8 @@ void mainGame::drawScore(drawer& dwr)
 
 void mainGame::gameLoop(short int score)
 {
-    if (init())
+    if (dwr.init())
     {
-        drawer dwr;
-        dwr.init(gWindow, gRenderer);
         if (dwr.loadMedia()&&dwr.loadMediaText())
         {
             bool quit = false;
@@ -150,10 +89,10 @@ void mainGame::gameLoop(short int score)
             short direct = 3;
             int sleepDelay;
             bool pause = 1;
-            initDraw(dwr);
+            initDraw();
             while (!quit)
             {
-                sleepDelay = 200;
+                sleepDelay = 125;
                 while (SDL_PollEvent(&e) != 0)
                 {
                     switch (e.type)
@@ -193,22 +132,22 @@ void mainGame::gameLoop(short int score)
                 }
                 if (!pause)
                 {
-                    switch (step(dwr, direct))
+                    switch (step(direct))
                     {
                     case 0:quit = 1; break;
                     case 1:break;
-                    case 2:drawScore(dwr); break;
+                    case 2:drawScore(); break;
                     }
                     if (snake.size() - STARTBLOCKS == score)
                     {
                         gameResult = 1;
                         quit = 1;
                     }
-                    SDL_RenderPresent(gRenderer);
+                    dwr.renderPresent();
                     SDL_Delay(sleepDelay);
                 }
                 else
-                    SDL_Delay(500);
+                    SDL_Delay(250);
             }
 
             if (gameResult)
@@ -216,18 +155,13 @@ void mainGame::gameLoop(short int score)
             else
                 dwr.renderText(20, 20, 350, 100, "GAME IS OVER!");
 
-            SDL_RenderPresent(gRenderer);
+            dwr.renderPresent();
             SDL_Delay(1500);
         }
-        dwr.close();
     }
 }
 
 
 mainGame::~mainGame()
 {
-    SDL_DestroyRenderer(gRenderer);
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
-    gRenderer = NULL;
 }

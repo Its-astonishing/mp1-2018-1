@@ -1,13 +1,23 @@
 #include "snakeObjects.h"
 
+point& point::operator =(const point& s)
+{
+    x = s.x;
+    y = s.y;
+    return *this;
+}
+bool point::operator == (const point& s) const
+{
+    return x == s.x && y == s.y;
+}
 void snakeObjects::createApple()
 {
     bool i = 1;
+    srand(time(0));
     while(i)
     {
-        srand(time(0));
-        apple.x = 2 + rand() % 62;
-        apple.y = 2 + rand() % 26;
+        apple.x = 2 + rand() % (fieldSize.x-3);
+        apple.y = 2 + rand() % (fieldSize.y-3);
         bool flag = 1;
         for (int j = 0; j < snake.size() && flag; j++)
         {
@@ -19,10 +29,17 @@ void snakeObjects::createApple()
     }
 }
 snakeObjects::snakeObjects()
+{ }
+void snakeObjects::setFieldSize(short int fieldSizeX, short int fieldSizeY)
+{
+    fieldSize.x = fieldSizeX;
+    fieldSize.y = fieldSizeY;
+}
+void snakeObjects::init()
 {
     point part;
-    part.x = 15;
-    part.y = 15;
+    part.x = fieldSize.x / 2;
+    part.y = fieldSize.y / 2;
     snake.push_back(part);
     for (int i = 0; i < STARTBLOCKS - 1; i++)
     {
@@ -31,6 +48,7 @@ snakeObjects::snakeObjects()
     }
     createApple();
 }
+
 point snakeObjects::getHead() const
 {
     return snake[0];
@@ -64,7 +82,7 @@ int snakeObjects::move(short int direction)       // returns: 0 when head hits t
         snake[0].y++;
         break;
     }
-    if (snake[0].x == 1 || snake[0].x == 62 || snake[0].y == 1 || snake[0].y == 46)
+    if (snake[0].x == 1 || snake[0].x == fieldSize.x - 1 || snake[0].y == 1 || snake[0].y == fieldSize.y - 1)
         return 0;
     point tmp2 = tmp1;
     for (int i = 1; i < snake.size(); i++)
@@ -87,7 +105,7 @@ point snakeObjects::getApple() const
 {
     return apple;
 }
-bool snakeObjects::isGameLost() const
+bool snakeObjects::headAteTale() const
 {
     for (int i = 1; i < snake.size(); i++)
     {
