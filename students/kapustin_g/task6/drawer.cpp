@@ -1,7 +1,5 @@
 #include "drawer.h"
 
-
-
 drawer::drawer()
 { }
 void drawer::renderPresent()
@@ -19,14 +17,13 @@ bool drawer::init()
     }
     else
     {
-
         //Set texture filtering to linear
         if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
         {
             printf("Warning: Linear texture filtering not enabled!");
         }
 
-        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENW*16 , SCREENH*16, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENW * 16, SCREENH * 16, SDL_WINDOW_SHOWN);
         if (gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -61,10 +58,8 @@ bool drawer::init()
             }
         }
     }
-
     return success;
 }
-
 void drawer::free()
 {
     if (mTexture != NULL)
@@ -91,7 +86,6 @@ void drawer::renderText(int _x, int _y, int sizex, int sizey, std::string t)
     }
     //Render to screen
     SDL_RenderCopy(gRenderer, textTexture, NULL, &renderQuad);
-
 }
 
 bool drawer::loadFromRenderedText(std::string textureText, SDL_Color textColor)
@@ -143,15 +137,14 @@ bool drawer::loadMediaText()
             success = false;
         }
     }
-
     return success;
 }
 
 void drawer::render(int _x, int _y, int i)
 {
     //Set rendering space and render to screen
-    SDL_Rect renderQuad = { _x*16, _y*16, 16, 16 };
-    
+    SDL_Rect renderQuad = { _x * 16, _y * 16, 16, 16 };
+
     //Render to screen
     SDL_RenderCopy(gRenderer, mTexture, &gSpriteClips[i], &renderQuad);
 }
@@ -171,7 +164,6 @@ bool drawer::loadFromFile(std::string path)
 
     if (loadedSurface == NULL)
         success = 0;
-
     else
     {
         //Color key image
@@ -183,11 +175,10 @@ bool drawer::loadFromFile(std::string path)
         if (newTexture == NULL)
             success = 0;
         else
-         SDL_FreeSurface(loadedSurface);
+            SDL_FreeSurface(loadedSurface);
     }
-
     mTexture = newTexture;
-    return success;  
+    return success;
 }
 bool drawer::loadMedia()
 {
@@ -197,7 +188,7 @@ bool drawer::loadMedia()
     if (!loadFromFile("snaketexture2.png"))
         success = false;
     else
-        for (int i = 0,k=0; i < 2; i++)
+        for (int i = 0, k = 0; i < 2; i++)
             for (int j = 0; j < 4; j++, k++)
             {
                 gSpriteClips[k].x = j * 16;
@@ -224,8 +215,6 @@ void drawer::close()
     IMG_Quit();
     SDL_Quit();
 }
-
-
 drawer::~drawer()
 {
     close();

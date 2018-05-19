@@ -10,9 +10,8 @@ class drawer
     SDL_Texture * mTexture = NULL;
     SDL_Texture *textTexture = NULL;
     TTF_Font *gFont = NULL;
-    SDL_Rect gSpriteClips[10]; 
+    SDL_Rect gSpriteClips[10];
     SDL_Rect *getSpriteClips();
-
     void freeT();
     void free();
 public:
@@ -22,7 +21,7 @@ public:
     bool init();
     bool loadMedia(); //loads snake sprite into rectangles
     bool loadMediaText();
-    void render(int _x, int _y, int i); 
+    void render(int _x, int _y, int i);
     void renderText(int _x, int _y, int sizex, int sizey, std::string t);
     bool loadFromFile(std::string path); //loads any texture into mTexture
     bool loadFromRenderedText(std::string textureText, SDL_Color textColor);

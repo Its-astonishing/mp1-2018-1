@@ -9,8 +9,8 @@ struct point
     short int y;
     point& operator =(const point& s);
     bool operator == (const point& s) const;
-    
 };
+
 class snakeObjects
 {
     point fieldSize;

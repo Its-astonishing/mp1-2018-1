@@ -1,9 +1,7 @@
 #include "mainGame.h"
 
-
-
-mainGame::mainGame(snakeObjects &_snake, drawer &_dwr):
-    snake(_snake),dwr(_dwr){ }
+mainGame::mainGame(snakeObjects &_snake, drawer &_dwr) :
+    snake(_snake), dwr(_dwr) { }
 int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when snake moved on field w/out any events, 2 when snake ate an apple
 {
     point _tale = snake.getTail();
@@ -32,7 +30,7 @@ int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when
 void mainGame::setFieldSize(short int x, short int y)
 {
     snake.setFieldSize(x, y);
-    dwr.SCREENW = x+5;
+    dwr.SCREENW = x + 5;
     dwr.SCREENH = y;
 }
 void mainGame::initDraw()
@@ -47,48 +45,44 @@ void mainGame::initDraw()
     }
     std::vector <point> ssnake = snake.getSnake();
     dwr.render(ssnake[0].x, ssnake[0].y, 3);
-    for (int i = 0; i < dwr.SCREENW-5; i++) 
+    for (int i = 0; i < dwr.SCREENW - 5; i++)
     {
         for (int j = 0; j < dwr.SCREENH; j++)
         {
             dwr.render(0, j, 7);
             dwr.render(1, j, 7);
-            dwr.render(dwr.SCREENW-6, j, 7);
-            dwr.render(dwr.SCREENW-7, j, 7);
-            
+            dwr.render(dwr.SCREENW - 6, j, 7);
+            dwr.render(dwr.SCREENW - 7, j, 7);
+
         }
         dwr.render(i, 0, 7);
         dwr.render(i, 1, 7);
-        dwr.render(i, dwr.SCREENH-1, 7);
-        dwr.render(i, dwr.SCREENH-2, 7);
-        
+        dwr.render(i, dwr.SCREENH - 1, 7);
+        dwr.render(i, dwr.SCREENH - 2, 7);
+
     }
     for (int i = 1; i < ssnake.size(); i++)
     {
         dwr.render(ssnake[i].x, ssnake[i].y, 4);
     }
-    dwr.renderText(dwr.SCREENW-5, 0, 80, 28, "Score");
+    dwr.renderText(dwr.SCREENW - 5, 0, 80, 28, "Score");
     drawScore();
     dwr.renderPresent();
-
 }
-
-
 void mainGame::drawScore()
 {
     short int points = snake.size() - STARTBLOCKS;
     std::ostringstream ost;
     ost << points;
     std::string s_num = ost.str();
-    dwr.render(dwr.SCREENW-5, 2, 6);
-    dwr.renderText(dwr.SCREENW-5, 2, 16, 16, s_num);
+    dwr.render(dwr.SCREENW - 5, 2, 6);
+    dwr.renderText(dwr.SCREENW - 5, 2, 16, 16, s_num);
 }
-
 void mainGame::gameLoop(short int score)
 {
     if (dwr.init())
     {
-        if (dwr.loadMedia()&&dwr.loadMediaText())
+        if (dwr.loadMedia() && dwr.loadMediaText())
         {
             snake.init();
             bool quit = false;
@@ -105,8 +99,8 @@ void mainGame::gameLoop(short int score)
                     switch (e.type)
                     {
                     case SDL_QUIT:
-                    quit = true;
-                    break;
+                        quit = true;
+                        break;
                     case SDL_KEYDOWN:
                         switch (e.key.keysym.sym)
                         {
@@ -165,15 +159,13 @@ void mainGame::gameLoop(short int score)
             if (gameResult)
                 dwr.renderText(dwr.SCREENW / 2 - 170 / 16, dwr.SCREENH / 2 - 100 / 16, 350, 100, "GAME IS WON!");
             else
-                dwr.renderText(dwr.SCREENW/2 - 170 / 16, dwr.SCREENH/2 - 100 / 16, 350, 100, "GAME IS OVER!");
+                dwr.renderText(dwr.SCREENW / 2 - 170 / 16, dwr.SCREENH / 2 - 100 / 16, 350, 100, "GAME IS OVER!");
 
             dwr.renderPresent();
             SDL_Delay(1500);
         }
     }
 }
-
-
 mainGame::~mainGame()
 {
 }

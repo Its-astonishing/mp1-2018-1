@@ -1,5 +1,6 @@
 #include "mainGame.h"
 #include <iostream>
+
 #undef main
 int main(int argc, char* args[])
 {
@@ -16,7 +17,7 @@ int main(int argc, char* args[])
         std::cin >> score;
         std::cout << std::endl << "Input width and height of the field (in blocks, 1 block = 16 px, > 17):";
         std::cin >> w >> h;
-    } while (score < 1 || score>300||w<17||h<17);
+    } while (score < 1 || score>300 || w < 17 || h < 17);
     gameObj.setFieldSize(w, h);
     gameObj.gameLoop(score);
     return 0;
