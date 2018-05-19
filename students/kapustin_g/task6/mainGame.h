@@ -8,7 +8,8 @@ class mainGame
 {
     snakeObjects &snake;
     drawer &dwr;
-    short unsigned int score = 0;
+    short unsigned int scoreCurrent = 0;
+    short unsigned int scoreGoal;
     bool gameResult = 0;
     int step(short int dir);  // returns: 0 when head hits the walls, 1 when snake moved on field w/out any events, 2 when snake ate an apple
     void drawScore();

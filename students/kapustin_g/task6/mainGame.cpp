@@ -2,7 +2,7 @@
 
 mainGame::mainGame(snakeObjects &_snake, drawer &_dwr) :
     snake(_snake), dwr(_dwr) { }
-int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when snake moved on field w/out any events, 2 when snake ate an apple
+int mainGame::step(short int dir) // returns: 0 when head hits the walls or eats itself, 1 when snake moved on field w/out any events, 2 when snake ate an apple
 {
     point _tale = snake.getTail();
     point _head = snake.getHead();
@@ -67,13 +67,18 @@ void mainGame::initDraw()
     }
     dwr.renderText(dwr.SCREENW - 5, 0, 80, 28, "Score");
     drawScore();
+    dwr.renderText(dwr.SCREENW - 5, 4, 80, 28, "Goal");
+    std::ostringstream ost;
+    ost << scoreGoal;
+    std::string s_num = ost.str();
+    dwr.render(dwr.SCREENW - 5, 2, 6);
+    dwr.renderText(dwr.SCREENW - 5, 6, 16, 16, s_num);
     dwr.renderPresent();
 }
 void mainGame::drawScore()
 {
-    short int points = snake.size() - STARTBLOCKS;
     std::ostringstream ost;
-    ost << points;
+    ost << scoreCurrent;
     std::string s_num = ost.str();
     dwr.render(dwr.SCREENW - 5, 2, 6);
     dwr.renderText(dwr.SCREENW - 5, 2, 16, 16, s_num);
@@ -84,6 +89,7 @@ void mainGame::gameLoop(short int score)
     {
         if (dwr.loadMedia() && dwr.loadMediaText())
         {
+            scoreGoal = score;
             snake.init();
             bool quit = false;
             SDL_Event e;
@@ -93,7 +99,7 @@ void mainGame::gameLoop(short int score)
             initDraw();
             while (!quit)
             {
-                sleepDelay = 100;
+                sleepDelay = 250;
                 while (SDL_PollEvent(&e) != 0)
                 {
                     switch (e.type)
@@ -141,10 +147,11 @@ void mainGame::gameLoop(short int score)
                     case 1:
                         break;
                     case 2:
+                        scoreCurrent++;
                         drawScore();
                         break;
                     }
-                    if (snake.size() - STARTBLOCKS == score) //player won
+                    if (scoreCurrent == scoreGoal) //player won
                     {
                         gameResult = 1;
                         quit = 1;

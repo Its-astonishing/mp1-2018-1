@@ -39,7 +39,7 @@ void snakeObjects::init()
 {
     point part;
     srand(time(0));
-    part.x = 2 + rand() % (fieldSize.x - 7);
+    part.x = 2 + rand() % (fieldSize.x - 8);
     part.y = 2 + rand() % (fieldSize.y - 4);
     snake.push_back(part);
     for (int i = 0; i < STARTBLOCKS - 1; i++)
