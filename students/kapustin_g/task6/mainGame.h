@@ -15,6 +15,7 @@ class mainGame
     void initDraw();
 
 public:
+    void setFieldSize(short int x, short int y);
     void gameLoop(short int score);
     mainGame(snakeObjects &_snake, drawer &_dwr);
     ~mainGame();

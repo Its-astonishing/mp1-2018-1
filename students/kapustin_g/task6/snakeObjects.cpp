@@ -38,8 +38,9 @@ void snakeObjects::setFieldSize(short int fieldSizeX, short int fieldSizeY)
 void snakeObjects::init()
 {
     point part;
-    part.x = fieldSize.x / 2;
-    part.y = fieldSize.y / 2;
+    srand(time(0));
+    part.x = 2 + rand() % (fieldSize.x - 7);
+    part.y = 2 + rand() % (fieldSize.y - 4);
     snake.push_back(part);
     for (int i = 0; i < STARTBLOCKS - 1; i++)
     {

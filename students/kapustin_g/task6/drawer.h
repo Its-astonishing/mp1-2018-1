@@ -27,7 +27,7 @@ public:
     bool loadFromFile(std::string path); //loads any texture into mTexture
     bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
     void close();
-    drawer(int x, int y);
+    drawer();
     ~drawer();
 };
 

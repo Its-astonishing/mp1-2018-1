@@ -29,9 +29,15 @@ int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when
         dwr.render(_tale.x, _tale.y, 6);
     return k;
 }
+void mainGame::setFieldSize(short int x, short int y)
+{
+    snake.setFieldSize(x, y);
+    dwr.SCREENW = x+5;
+    dwr.SCREENH = y;
+}
 void mainGame::initDraw()
 {
-    for (int i = 0; i < dwr.SCREENW +5; i++)
+    for (int i = 0; i < dwr.SCREENW; i++)
     {
         for (int j = 0; j < dwr.SCREENH; j++)
         {
@@ -41,27 +47,27 @@ void mainGame::initDraw()
     }
     std::vector <point> ssnake = snake.getSnake();
     dwr.render(ssnake[0].x, ssnake[0].y, 3);
-    for (int i = 0; i < dwr.SCREENW; i++)
+    for (int i = 0; i < dwr.SCREENW-5; i++) 
     {
         for (int j = 0; j < dwr.SCREENH; j++)
         {
             dwr.render(0, j, 7);
             dwr.render(1, j, 7);
-            dwr.render(dwr.SCREENW-2, j, 7);
-            dwr.render(dwr.SCREENW-1, j, 7);
+            dwr.render(dwr.SCREENW-6, j, 7);
+            dwr.render(dwr.SCREENW-7, j, 7);
             
         }
         dwr.render(i, 0, 7);
         dwr.render(i, 1, 7);
-        dwr.render(i, dwr.SCREENH-2, 7);
         dwr.render(i, dwr.SCREENH-1, 7);
+        dwr.render(i, dwr.SCREENH-2, 7);
         
     }
     for (int i = 1; i < ssnake.size(); i++)
     {
         dwr.render(ssnake[i].x, ssnake[i].y, 4);
     }
-    dwr.renderText(dwr.SCREENW, 0, 80, 28, "Score");
+    dwr.renderText(dwr.SCREENW-5, 0, 80, 28, "Score");
     drawScore();
     dwr.renderPresent();
 
@@ -74,8 +80,8 @@ void mainGame::drawScore()
     std::ostringstream ost;
     ost << points;
     std::string s_num = ost.str();
-    dwr.render(dwr.SCREENW, 2, 6);
-    dwr.renderText(dwr.SCREENW, 2, 16, 16, s_num);
+    dwr.render(dwr.SCREENW-5, 2, 6);
+    dwr.renderText(dwr.SCREENW-5, 2, 16, 16, s_num);
 }
 
 void mainGame::gameLoop(short int score)
@@ -84,6 +90,7 @@ void mainGame::gameLoop(short int score)
     {
         if (dwr.loadMedia()&&dwr.loadMediaText())
         {
+            snake.init();
             bool quit = false;
             SDL_Event e;
             short direct = 3;
