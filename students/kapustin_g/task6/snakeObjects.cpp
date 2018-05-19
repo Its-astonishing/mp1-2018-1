@@ -16,8 +16,8 @@ void snakeObjects::createApple()
     srand(time(0));
     while(i)
     {
-        apple.x = 2 + rand() % (fieldSize.x-3);
-        apple.y = 2 + rand() % (fieldSize.y-3);
+        apple.x = 2 + rand() % (fieldSize.x-4);
+        apple.y = 2 + rand() % (fieldSize.y-4);
         bool flag = 1;
         for (int j = 0; j < snake.size() && flag; j++)
         {
@@ -82,7 +82,7 @@ int snakeObjects::move(short int direction)       // returns: 0 when head hits t
         snake[0].y++;
         break;
     }
-    if (snake[0].x == 1 || snake[0].x == fieldSize.x - 1 || snake[0].y == 1 || snake[0].y == fieldSize.y - 1)
+    if (snake[0].x == 1 || snake[0].x == fieldSize.x - 2 || snake[0].y == 1 || snake[0].y == fieldSize.y - 2)
         return 0;
     point tmp2 = tmp1;
     for (int i = 1; i < snake.size(); i++)

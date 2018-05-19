@@ -2,9 +2,10 @@
 
 
 
-drawer::drawer()
+drawer::drawer(int x, int y)
 {
-
+    SCREENW = x;
+    SCREENH = y;
 }
 void drawer::renderPresent()
 {
@@ -28,7 +29,7 @@ bool drawer::init()
             printf("Warning: Linear texture filtering not enabled!");
         }
 
-        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENH, SCREENW, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow("Snake game v 1.0", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREENW*16 + 80, SCREENH*16, SDL_WINDOW_SHOWN);
         if (gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());

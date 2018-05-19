@@ -4,9 +4,9 @@
 int main(int argc, char* args[])
 {
     snakeObjects snake;
-    snake.setFieldSize(63, 47);
+    snake.setFieldSize(64, 48);
     snake.init();
-    drawer Drawer;
+    drawer Drawer(64,48);
     mainGame gameObj(snake, Drawer);
     int score;
     do

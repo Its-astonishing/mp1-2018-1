@@ -3,9 +3,6 @@
 #include <SDL_image.h>
 #include <string>
 #include <SDL_ttf.h>
-#define SCREENH 1104 
-#define SCREENW 768
-
 class drawer
 {
     SDL_Window *gWindow = NULL;
@@ -19,6 +16,8 @@ class drawer
     void freeT();
     void free();
 public:
+    int SCREENH;
+    int SCREENW;
     void renderPresent();
     bool init();
     bool loadMedia(); //loads snake sprite into rectangles
@@ -28,7 +27,7 @@ public:
     bool loadFromFile(std::string path); //loads any texture into mTexture
     bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
     void close();
-    drawer();
+    drawer(int x, int y);
     ~drawer();
 };
 

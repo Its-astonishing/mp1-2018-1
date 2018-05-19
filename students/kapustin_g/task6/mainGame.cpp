@@ -31,9 +31,9 @@ int mainGame::step(short int dir) // returns: 0 when head hits the walls, 1 when
 }
 void mainGame::initDraw()
 {
-    for (int i = 0; i < 69; i++)
+    for (int i = 0; i < dwr.SCREENW +5; i++)
     {
-        for (int j = 0; j < 48; j++)
+        for (int j = 0; j < dwr.SCREENH; j++)
         {
 
             dwr.render(i, j, 6);
@@ -41,27 +41,27 @@ void mainGame::initDraw()
     }
     std::vector <point> ssnake = snake.getSnake();
     dwr.render(ssnake[0].x, ssnake[0].y, 3);
-    for (int i = 0; i < 64; i++)
+    for (int i = 0; i < dwr.SCREENW; i++)
     {
-        for (int j = 0; j < 48; j++)
+        for (int j = 0; j < dwr.SCREENH; j++)
         {
             dwr.render(0, j, 7);
             dwr.render(1, j, 7);
-            dwr.render(62, j, 7);
-            dwr.render(63, j, 7);
+            dwr.render(dwr.SCREENW-2, j, 7);
+            dwr.render(dwr.SCREENW-1, j, 7);
             
         }
         dwr.render(i, 0, 7);
         dwr.render(i, 1, 7);
-        dwr.render(i, 46, 7);
-        dwr.render(i, 47, 7);
+        dwr.render(i, dwr.SCREENH-2, 7);
+        dwr.render(i, dwr.SCREENH-1, 7);
         
     }
     for (int i = 1; i < ssnake.size(); i++)
     {
         dwr.render(ssnake[i].x, ssnake[i].y, 4);
     }
-    dwr.renderText(64, 0, 80, 28, "Score");
+    dwr.renderText(dwr.SCREENW, 0, 80, 28, "Score");
     drawScore();
     dwr.renderPresent();
 
@@ -74,8 +74,8 @@ void mainGame::drawScore()
     std::ostringstream ost;
     ost << points;
     std::string s_num = ost.str();
-    dwr.render(64, 2, 6);
-    dwr.renderText(64, 2, 16, 16, s_num);
+    dwr.render(dwr.SCREENW, 2, 6);
+    dwr.renderText(dwr.SCREENW, 2, 16, 16, s_num);
 }
 
 void mainGame::gameLoop(short int score)
@@ -151,9 +151,9 @@ void mainGame::gameLoop(short int score)
             }
 
             if (gameResult)
-                dwr.renderText(20, 20, 350, 100, "GAME IS WON!");
+                dwr.renderText(dwr.SCREENW / 2 - 170 / 16, dwr.SCREENH / 2 - 100 / 16, 350, 100, "GAME IS WON!");
             else
-                dwr.renderText(20, 20, 350, 100, "GAME IS OVER!");
+                dwr.renderText(dwr.SCREENW/2 - 170 / 16, dwr.SCREENH/2 - 100 / 16, 350, 100, "GAME IS OVER!");
 
             dwr.renderPresent();
             SDL_Delay(1500);
