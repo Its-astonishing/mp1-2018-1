@@ -92,7 +92,7 @@ void mainGame::gameLoop(short int score)
             initDraw();
             while (!quit)
             {
-                sleepDelay = 125;
+                sleepDelay = 100;
                 while (SDL_PollEvent(&e) != 0)
                 {
                     switch (e.type)
@@ -119,7 +119,7 @@ void mainGame::gameLoop(short int score)
                             direct = 1;
                             break;
                         case SDLK_SPACE:
-                            sleepDelay = 50;
+                            sleepDelay = 40;
                             break;
                         case SDLK_ESCAPE:
                             pause = !pause;
@@ -130,15 +130,20 @@ void mainGame::gameLoop(short int score)
                         break;
                     }
                 }
-                if (!pause)
+                if (!pause) //gamebody
                 {
                     switch (step(direct))
                     {
-                    case 0:quit = 1; break;
-                    case 1:break;
-                    case 2:drawScore(); break;
+                    case 0:
+                        quit = 1;
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        drawScore();
+                        break;
                     }
-                    if (snake.size() - STARTBLOCKS == score)
+                    if (snake.size() - STARTBLOCKS == score) //player won
                     {
                         gameResult = 1;
                         quit = 1;

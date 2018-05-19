@@ -3,11 +3,11 @@
 #undef main
 int main(int argc, char* args[])
 {
-    snakeObjects snake;
+    snakeObjects snake; //this class contains information about snake, food and also int contains size of the game field
     snake.setFieldSize(64, 48);
     snake.init();
-    drawer Drawer(64,48);
-    mainGame gameObj(snake, Drawer);
+    drawer Drawer(64,48); // this class provides ability to work with sdl: load textures, render them, create windows etc 
+    mainGame gameObj(snake, Drawer); //this one is the main class it draws image, controls keyboard
     int score;
     do
     {
