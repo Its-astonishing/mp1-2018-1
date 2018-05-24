@@ -99,7 +99,7 @@ void mainGame::gameLoop(short int score)
             initDraw();
             while (!quit)
             {
-                sleepDelay = 250;
+                sleepDelay = 100;
                 while (SDL_PollEvent(&e) != 0)
                 {
                     switch (e.type)
