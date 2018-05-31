@@ -319,6 +319,7 @@ int main()
 {
     SetConsoleCP(866);
     SetConsoleOutputCP(866);
+
     wcout << L"\n\n\n\t\t\tНавигация по программе осуществляется стрелками вверх вниз, esc и enter";
     _getch();
     contacts m;

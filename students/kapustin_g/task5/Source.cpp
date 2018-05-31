@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <Windows.h>
 #include <string>
 #include <cmath>
 using namespace std;
@@ -346,6 +347,8 @@ void credit::depositeChange(int money)
 
 int main()
 {
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "Russian");   
     credit vtb;
     creditInfo creditTmp;
